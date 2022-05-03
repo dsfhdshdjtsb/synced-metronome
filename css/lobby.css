@@ -1,0 +1,58 @@
+body{
+  margin: 0;
+}
+
+h3{
+  font-size: 2.5rem;
+}
+
+.top-section{
+  height: 400px;
+  margin:auto;
+  padding: 7% 10px 0 10px;
+  border-bottom: 2px solid;
+  text-align:center;
+  background-color: #fa545c;
+  color:white;
+}
+
+.bottom-section{
+  margin-top: 3%;
+  text-align: center;
+}
+
+.num-players{
+  font-family: "Raleway", sans-serif;
+  font-size: 6rem;
+}
+
+.caption{
+  font-family: "Raleway", sans-serif;
+  font-size: 3rem;
+}
+
+.btn-xl {
+    padding: 15px 30px;
+    font-size: 3rem;
+    line-height: normal;
+    -webkit-border-radius: 8px;
+       -moz-border-radius: 8px;
+            border-radius: 8px;
+}
+
+.btn-cell{
+  padding-top: 3%;
+}
+
+.code{
+  font-size: 5rem;
+}
+
+@media screen and (max-width: 500px) {
+  .btn-xl {
+      font-size: 2rem; 
+  }
+  .top-section{
+    height: 250px;
+  }
+}

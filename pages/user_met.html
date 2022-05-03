@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/default.css">
+    <link rel="stylesheet" href="../css/user_met.css">
+    <title>Metronome</title>
+
+</head>
+<body>
+    <div class="container">
+        <span class="dot"></span>
+        <div class="metronome">
+            <div class="bpm-display">
+                <span class="tempo">140</span>
+                <span class="bpm">BPM</span>
+            </div>
+            <span class="beats-per-measure-text">4 Beats per measure</span>
+            <div class="tempo-text"></div>    
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../js/user_met.js" type="module"></script>
+</body>
+</html>

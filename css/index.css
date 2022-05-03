@@ -1,0 +1,32 @@
+body{
+  margin-top: 10%;
+}
+
+h1 {
+  color: #fa545c;
+  text-align: center;
+  font-family: "Raleway", serif;
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.option{
+  border: 2px solid;
+  border-color:#D3D3D3;
+  height: 150px;
+  width: 300px;
+  margin:auto;
+  text-align: center;
+  padding: 40px 10px 20px 10px;
+}
+
+.game-pin{
+  text-align:center;
+  font-weight: bold;
+}
+
+@media (max-width: 500px) {
+  h1 {
+    font-size: 3.5rem;
+  }
+}

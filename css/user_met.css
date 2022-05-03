@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&family=Rubik&display=swap');
+
+body{
+  font-family: "Raleway", sans-serif;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.metronome {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 250px;
+    justify-content: space-between;
+}
+.bpm-display {
+    width: 100%;
+    text-align: center;
+    color: #fa545c;
+    font-family: "Raleway", sans-serif;
+    font-weight: bold;
+}
+.bpm-display .tempo {
+    font-size: 7em;
+}
+.tempo-text {
+    font-size: 1.3em;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.tempo-settings {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dot {
+  height: 150px;
+  width: 150px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.beats-per-measure-text {
+    text-align: center;
+    font-size: 1.5em;
+    text-transform: uppercase;
+}

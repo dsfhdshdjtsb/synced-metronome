@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&family=Rubik&display=swap');
+
+
+*{
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Rubik", serif;
+  color: #fa545c;
+}
+
+.option-btn{
+  background-color: #ff545c;
+  color: white;
+}
+
+.option-btn:hover{
+  background-color:#ff646c;
+  color: white;
+}
