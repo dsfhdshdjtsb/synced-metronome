@@ -19,6 +19,8 @@ let beatsPerMeasure = 4;
 let count = 0;
 let isRunning = false;
 let tempoTextString = 'Medium';
+
+
 var socket = io();
 
 socket.on('user_toggle', function(msg) {
@@ -31,6 +33,7 @@ socket.on('user_toggle', function(msg) {
         metronome.stop();
     }
 })
+
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
     bpm--;
@@ -65,16 +68,30 @@ addBeats.addEventListener('click', () => {
 startStopBtn.addEventListener('click', () => {
     count = 0;
     if (!isRunning) {
+        metronome.start();
+        isRunning = true;
+        startStopBtn.textContent = 'STOP';
+    } else {
+        metronome.stop();
+        isRunning = false;
+        startStopBtn.textContent = 'START';
+
+    }
+});
+
+startStopBtn.addEventListener('click', () => {
+    count = 0;
+    if (!isRunning) {
         isRunning = true;
         startStopBtn.textContent = 'STOP';
         socket.emit('server_toggle', 'start')
     } else {
         isRunning = false;
         startStopBtn.textContent = 'START';
-        dot.style.background = "#bbb";
+        dot.style.background = "white";
         socket.emit('server_toggle', 'stop')
     }
-    
+
 });
 
 function updateMetronome() {
@@ -96,6 +113,7 @@ function updateMetronome() {
 
     tempoText.textContent = tempoTextString;
 }
+
 function validateTempo() {
     if (bpm <= 20) { return };
     if (bpm >= 280) { return };
@@ -108,16 +126,15 @@ function playClick() {
     }
     if (count === 0) {
         click1.play();
-        dot.style.background = "#F0DF8B";
         click1.currentTime = 0;
     } else {
         click2.play();
-        if (count%2===1){
-          dot.style.background = "#00FF00";
-        } else{
-          dot.style.background = "#FF0000";
-        }
         click2.currentTime = 0;
+    }
+    if (count%2 === 0){
+      dot.style.background = "#fa545c";
+    } else{
+      dot.style.background = "white";
     }
     count++;
 }
