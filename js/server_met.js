@@ -11,7 +11,7 @@ const addBeats = document.querySelector('.add-beats');
 const measureCount = document.querySelector('.measure-count');
 const dot = document.querySelector('.dot');
 
-const click1 = new Audio('../audio/click1.mp3');
+const click1 = new Audio('../audio/click2.mp3');
 const click2 = new Audio('../audio/click2.mp3');
 
 let bpm = 140;
@@ -30,34 +30,40 @@ socket.on('user_toggle', function(msg) {
     {
         metronome.stop();
     }
-})
+});
+
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
     bpm--;
+    socket.emit('server_bpm', bpm);
     validateTempo();
     updateMetronome();
 });
 increaseTempoBtn.addEventListener('click', () => {
     if (bpm >= 280) { return };
     bpm++;
+    socket.emit('server_bpm', bpm);
     validateTempo();
     updateMetronome();
 });
 tempoSlider.addEventListener('input', () => {
     bpm = tempoSlider.value;
+    socket.emit('server_bpm', bpm);
     validateTempo();
     updateMetronome();
 });
 
 subtractBeats.addEventListener('click', () => {
-    if (beatsPerMeasure <= 2) { return };
+    if (beatsPerMeasure <= 1) { return };
     beatsPerMeasure--;
+    socket.emit('server_bpmeasure', beatsPerMeasure);
     measureCount.textContent = beatsPerMeasure;
     count = 0;
 });
 addBeats.addEventListener('click', () => {
     if (beatsPerMeasure >= 12) { return };
     beatsPerMeasure++;
+    socket.emit('server_bpmeasure', beatsPerMeasure);
     measureCount.textContent = beatsPerMeasure;
     count = 0;
 });
@@ -67,12 +73,12 @@ startStopBtn.addEventListener('click', () => {
     if (!isRunning) {
         isRunning = true;
         startStopBtn.textContent = 'STOP';
-        socket.emit('server_toggle', 'start')
+        socket.emit('server_toggle', "start");
     } else {
         isRunning = false;
         startStopBtn.textContent = 'START';
         dot.style.background = "#bbb";
-        socket.emit('server_toggle', 'stop')
+        socket.emit('server_toggle', "stop");
     }
     
 });
@@ -122,4 +128,4 @@ function playClick() {
     count++;
 }
 
-const metronome = new Timer(playClick, 60000 / bpm, { immediate: true });
+let metronome = new Timer(playClick, 60000 / bpm, { immediate: true });

@@ -5,7 +5,7 @@ const tempoText = document.querySelector('.tempo-text');
 const measureCount = document.querySelector('.measure-count');
 const dot = document.querySelector('.dot');
 
-const click1 = new Audio('../audio/click1.mp3');
+const click1 = new Audio('../audio/click2.mp3');
 const click2 = new Audio('../audio/click2.mp3');
 
 let bpm = 140;
@@ -25,11 +25,22 @@ socket.on('user_toggle', function(msg) {
     {
         metronome.stop();
     }
-})
+});
+
+socket.on('user_bpm', function(msg) {
+    bpm = parseInt(msg);
+    console.log("curbpm" + bpm)
+    updateMetronome();
+});
+
+socket.on('user_bpmeasure', function(msg) {
+    beatsPerMeasure = parseInt(msg);
+    updateMetronome();
+});
+
 
 function updateMetronome() {
     tempoDisplay.textContent = bpm;
-    tempoSlider.value = bpm;
     metronome.timeInterval = 60000 / bpm;
     if (bpm <= 40) { tempoTextString = "Grave" };
     if (bpm > 40 && bpm <= 45) { tempoTextString = "Lento" };
@@ -52,7 +63,6 @@ function validateTempo() {
 }
 
 function playClick() {
-    console.log(count);
     if (count === beatsPerMeasure) {
         count = 0;
     }

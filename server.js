@@ -14,8 +14,15 @@ app.use(express.static(__dirname + '/'));
 io.on('connection', (socket) => {
   //console.log('a user connected');
   socket.on('server_toggle', (msg) => {
-    console.log('server_toggle: ' + msg);
     io.emit('user_toggle', msg)
+  });
+  socket.on('server_bpm', (msg) => {
+    console.log("server_bpm" + msg)
+    io.emit('user_bpm', msg)
+  });
+  socket.on('server_bpmeasure', (msg) => {
+    console.log("server_bpmeasure" + msg)
+    io.emit('user_bpmeasure', msg)
   });
 });
 
