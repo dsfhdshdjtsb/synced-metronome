@@ -50,9 +50,10 @@ h3{
 
 @media screen and (max-width: 500px) {
   .btn-xl {
-      font-size: 2rem; 
+      font-size: 2rem; //change this to your desired size
   }
   .top-section{
     height: 250px;
   }
+
 }
