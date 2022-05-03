@@ -68,18 +68,18 @@ function playClick() {
     }
     if (count === 0) {
         click1.play();
-        dot.style.background = "#F0DF8B";
         click1.currentTime = 0;
     } else {
         click2.play();
-        if (count%2===1){
-          dot.style.background = "#00FF00";
-        } else{
-          dot.style.background = "#FF0000";
-        }
         click2.currentTime = 0;
+    }
+    if (count%2 === 0){
+      dot.style.background = "#fa545c";
+    } else{
+      dot.style.background = "white";
     }
     count++;
 }
 
-const metronome = new Timer(playClick, 60000 / bpm, { immediate: true });
+
+const metronome = new Timer(playClick, 60000 / bpm, { immediate: true });a
