@@ -22,10 +22,12 @@ var socket = io();
 socket.on('user_toggle', function(msg) {
     if(msg == "start")
     {
+        count = 0;
         metronome.start();
     }
     else if(msg == "stop")
     {
+        count = 0;
         metronome.stop();
     }
 });
