@@ -38,7 +38,11 @@ app.get('/server_met', function(req, res){
 app.get('/user_met', function(req, res){
   res.sendFile(path.join(__dirname + '/pages/user_met.html'));
 });
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
+server.listen(port, () => {
+  console.log('listening on *:' + port);
 });
