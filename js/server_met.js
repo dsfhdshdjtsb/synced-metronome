@@ -77,7 +77,7 @@ startStopBtn.addEventListener('click', () => {
     } else {
         isRunning = false;
         startStopBtn.textContent = 'START';
-        dot.style.background = "#bbb";
+        dot.style.background = "white";
         socket.emit('server_toggle', "stop");
     }
     
