@@ -38,6 +38,10 @@ app.get('/server_met', function(req, res){
 app.get('/user_met', function(req, res){
   res.sendFile(path.join(__dirname + '/pages/user_met.html'));
 });
+app.get('/waiting', function(req, res){
+  res.sendFile(path.join(__dirname + '/pages/waiting.html'));
+});
+
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 8000;
