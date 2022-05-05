@@ -56,22 +56,6 @@ tempoSlider.addEventListener('input', () => {
     updateMetronome();
 });
 
-subtractBeats.addEventListener('click', () => {
-    // if (beatsPerMeasure <= 1) { return };
-    // beatsPerMeasure--;
-    // socket.emit('server_bpmeasure', beatsPerMeasure);
-    // measureCount.textContent = beatsPerMeasure;
-    // count = 0;
-});
-
-addBeats.addEventListener('click', () => {
-    if (beatsPerMeasure >= 12) { return };
-    beatsPerMeasure++;
-    socket.emit('server_bpmeasure', beatsPerMeasure);
-    measureCount.textContent = beatsPerMeasure;
-    count = 0;
-});
-
 
 startStopBtn.addEventListener('click', () => {
     if (lobbyCreated === false){

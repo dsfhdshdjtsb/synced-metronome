@@ -161,12 +161,3 @@ input[type=range]::-moz-range-track {
     background: #ff656c;
     color: #fff;
 }
-.measures .add-beats {
-    line-height: 20px;
-}
-
-.beats-per-measure-text {
-    text-align: center;
-    font-size: 0.5em;
-    text-transform: uppercase;
-}
