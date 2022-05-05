@@ -20,16 +20,13 @@ let count = 0;
 let isRunning = false;
 let tempoTextString = 'Medium';
 var socket = io();
+const id = makeid(5);
 
-socket.on('user_toggle', function(msg) {
-    if(msg == "start")
-    {
-        metronome.start();
-    }
-    else if(msg == "stop")
-    {
-        metronome.stop();
-    }
+socket.on('user_start', function(msg) {
+    metronome.start();
+});
+socket.on('user_stop', function(msg) {
+    metronome.stop();
 });
 
 decreaseTempoBtn.addEventListener('click', () => {
@@ -54,12 +51,14 @@ tempoSlider.addEventListener('input', () => {
 });
 
 subtractBeats.addEventListener('click', () => {
-    if (beatsPerMeasure <= 1) { return };
-    beatsPerMeasure--;
-    socket.emit('server_bpmeasure', beatsPerMeasure);
-    measureCount.textContent = beatsPerMeasure;
-    count = 0;
+    // if (beatsPerMeasure <= 1) { return };
+    // beatsPerMeasure--;
+    // socket.emit('server_bpmeasure', beatsPerMeasure);
+    // measureCount.textContent = beatsPerMeasure;
+    // count = 0;
+    socket.emit('create_room', id);
 });
+
 addBeats.addEventListener('click', () => {
     if (beatsPerMeasure >= 12) { return };
     beatsPerMeasure++;
@@ -73,12 +72,12 @@ startStopBtn.addEventListener('click', () => {
     if (!isRunning) {
         isRunning = true;
         startStopBtn.textContent = 'STOP';
-        socket.emit('server_toggle', "start");
+        socket.emit('master_start', id);
     } else {
         isRunning = false;
         startStopBtn.textContent = 'START';
         dot.style.background = "#bbb";
-        socket.emit('server_toggle', "stop");
+        socket.emit('master_stop', id);
     }
     
 });
@@ -125,6 +124,17 @@ function playClick() {
       dot.style.background = "white";
     }
     count++;
+}
+
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 
+ charactersLength));
+   }
+   return result;
 }
 
 let metronome = new Timer(playClick, 60000 / bpm, { immediate: true });
