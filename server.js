@@ -20,13 +20,14 @@ io.on('connection', (socket) => {
     io.to(msg).emit('user_stop', msg)
   });
   socket.on('server_bpm', (msg) => {
-    console.log("server_bpm" + msg)
-    io.emit('user_bpm', msg)
+    console.log(msg.ID)
+    console.log(msg.BPM)
+    io.to(msg.ID).emit('user_bpm', msg.BPM)
   });
-  socket.on('server_bpmeasure', (msg) => {
-    console.log("server_bpmeasure" + msg)
-    io.emit('user_bpmeasure', msg)
-  });
+  // socket.on('server_bpmeasure', (msg) => {
+  //   console.log("server_bpmeasure" + msg)
+  //   io.emit('user_bpmeasure', msg)
+  // });
   socket.on('join_room', (msg) => {
     if(io.sockets.adapter.rooms.has(msg))
     {
