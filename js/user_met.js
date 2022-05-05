@@ -59,8 +59,8 @@ function updateMetronome() {
     if (bpm > 77 && bpm <= 97) { tempoTextString = "Moderato" };
     if (bpm > 97 && bpm <= 109) { tempoTextString = "Allegretto" };
     if (bpm > 109 && bpm <= 132) { tempoTextString = "Allegro" };
-    if (bpm > 132 && bpm <= 168) { tempoTextString = "Vivace" };
-    if (bpm > 168 && bpm <= 177) { tempoTextString = "Presto" };
+    if (bpm > 132 && bpm <= 154) { tempoTextString = "Vivace" };
+    if (bpm > 154 && bpm <= 177) { tempoTextString = "Presto" };
     if (bpm > 178) { tempoTextString = "Prestissimo" };
 
     tempoText.textContent = tempoTextString;
