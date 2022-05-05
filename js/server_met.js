@@ -67,12 +67,10 @@ startStopBtn.addEventListener('click', () => {
     }else{
       count = 0;
       if (!isRunning) {
-          count = 0;
           isRunning = true;
           startStopBtn.textContent = 'STOP';
           socket.emit('master_start', id);
       } else {
-        count = 0;
           isRunning = false;
           startStopBtn.textContent = 'START';
           dot.style.background = "white";

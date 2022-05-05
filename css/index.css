@@ -25,6 +25,11 @@ h1 {
   font-weight: bold;
 }
 
+.option-btn:hover{
+  color:white;
+  background-color: #fa666d;
+}
+
 @media (max-width: 500px) {
   h1 {
     font-size: 3.5rem;
