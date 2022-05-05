@@ -10,6 +10,8 @@ const subtractBeats = document.querySelector('.subtract-beats');
 const addBeats = document.querySelector('.add-beats');
 const measureCount = document.querySelector('.measure-count');
 const dot = document.querySelector('.dot');
+const code = document.querySelector('.code');
+const id = makeid(5)
 
 const click1 = new Audio('../audio/click2.mp3');
 const click2 = new Audio('../audio/click2.mp3');
@@ -18,14 +20,12 @@ let bpm = 140;
 let beatsPerMeasure = 4;
 let count = 0;
 let isRunning = false;
+let lobbyCreated = false;
 let tempoTextString = 'Medium';
 var socket = io();
-const id = makeid(5);
 
-console.log(id)
 
 socket.on('user_start', function(msg) {
-    console.log(id)
     metronome.start();
     count = 0;
 });
@@ -62,7 +62,6 @@ subtractBeats.addEventListener('click', () => {
     // socket.emit('server_bpmeasure', beatsPerMeasure);
     // measureCount.textContent = beatsPerMeasure;
     // count = 0;
-    socket.emit('create_room', id);
 });
 
 addBeats.addEventListener('click', () => {
@@ -73,19 +72,27 @@ addBeats.addEventListener('click', () => {
     count = 0;
 });
 
-startStopBtn.addEventListener('click', () => {
-    count = 0;
-    if (!isRunning) {
-        isRunning = true;
-        startStopBtn.textContent = 'STOP';
-        socket.emit('master_start', id);
-    } else {
-        isRunning = false;
-        startStopBtn.textContent = 'START';
-        dot.style.background = "white";
-        socket.emit('master_stop', id);
-    }
 
+startStopBtn.addEventListener('click', () => {
+    if (lobbyCreated === false){
+      startStopBtn.textContent = "START";
+      socket.emit('create_room', id);
+      code.textContent = id;
+
+      lobbyCreated = true;
+    }else{
+      count = 0;
+      if (!isRunning) {
+          isRunning = true;
+          startStopBtn.textContent = 'STOP';
+          socket.emit('master_start', id);
+      } else {
+          isRunning = false;
+          startStopBtn.textContent = 'START';
+          dot.style.background = "white";
+          socket.emit('master_stop', id);
+      }
+    }
 });
 
 function updateMetronome() {
@@ -125,16 +132,16 @@ function playClick() {
         click2.currentTime = 0;
     }
     if (count%2 === 0){
-      dot.style.background = "#fa545c";
-    } else{
       dot.style.background = "white";
+    } else{
+      dot.style.background = "#fa545c";
     }
     count++;
 }
 
 function makeid(length) {
     var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var characters       = 'ABCDEFGHJKMNOPQRSTUVWXYZabcdefghjkmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
     for ( var i = 0; i < length; i++ ) {
       result += characters.charAt(Math.floor(Math.random() *

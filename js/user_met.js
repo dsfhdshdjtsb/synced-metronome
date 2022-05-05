@@ -28,6 +28,7 @@ socket.on('user_start', function(msg) {
 socket.on('user_stop', function(msg) {
     metronome.stop();
     count = 0
+    dot.style.background = "white";
 });
 
 socket.on('user_bpm', function(msg) {

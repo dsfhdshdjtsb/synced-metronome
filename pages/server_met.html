@@ -10,6 +10,10 @@
 
 </head>
 <body>
+    <div class="top-section">
+      <h2 class="code-descrip">Room Code: </h2>
+      <h1 class="code"></h1>
+    </div>
     <div class="container">
         <div class="metronome">
             <span class="dot"></span>
@@ -23,7 +27,7 @@
                 <input type="range" min="20" max="280" step="1" class="slider">
                 <div class="adjust-tempo-btn increase-tempo">+</div>
             </div>
-            <div class="start-stop">START</div>
+            <div class="start-stop">CREATE</div>
             <div class="measures">
                 <div class="subtract-beats stepper">-</div>
                 <div class="measure-count">4</div>
@@ -35,6 +39,6 @@
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../js/server_met.js" type="module"></script>
-    
+
 </body>
 </html>
