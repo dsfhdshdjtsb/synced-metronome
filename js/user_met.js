@@ -5,8 +5,9 @@ const tempoText = document.querySelector('.tempo-text');
 const measureCount = document.querySelector('.measure-count');
 const testButton = document.querySelector('.testButton');
 const dot = document.querySelector('.dot');
-const enterBtn = document.querySelector('.troll');
-const codeInput = document.getElementById("code");
+const enterBtn = document.querySelector('.join-btn');
+const codeInput = document.querySelector('.form-control');
+
 
 // const click1 = new Audio('../audio/click2.mp3');
 // const click2 = new Audio('../audio/click2.mp3');
@@ -44,6 +45,7 @@ socket.on('user_bpm', function(msg) {
 
 enterBtn.addEventListener('click', () => {
     var txt = codeInput.value
+    console.log(txt);
     socket.emit('join_room', txt);
 });
 

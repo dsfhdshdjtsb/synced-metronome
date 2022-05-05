@@ -8,7 +8,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 80vh;
 }
 .metronome {
     display: flex;
@@ -51,4 +51,31 @@ body{
     text-align: center;
     font-size: 1.5em;
     text-transform: uppercase;
+}
+
+.form-control{
+  margin: 0 20px 0 20px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+    .form-inline .form-control {
+        width: 150px;
+    }
+}
+
+.top-section{
+  background: #fa545c;
+  color: #fff;
+  height: 100px;
+  text-align: center;
+  padding-top: 30px;
+}
+
+.join-btn {
+  color: #fa545c;
+}
+
+.btn:hover{
+  color:#fa545c;
 }
