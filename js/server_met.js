@@ -22,12 +22,16 @@ let tempoTextString = 'Medium';
 var socket = io();
 const id = makeid(5);
 
+console.log(id)
+
 socket.on('user_start', function(msg) {
     console.log(id)
     metronome.start();
+    count = 0;
 });
 socket.on('user_stop', function(msg) {
     metronome.stop();
+    count = 0;
 });
 
 decreaseTempoBtn.addEventListener('click', () => {
@@ -78,7 +82,7 @@ startStopBtn.addEventListener('click', () => {
     } else {
         isRunning = false;
         startStopBtn.textContent = 'START';
-        dot.style.background = "#bbb";
+        dot.style.background = "white";
         socket.emit('master_stop', id);
     }
 

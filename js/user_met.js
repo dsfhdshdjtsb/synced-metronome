@@ -22,10 +22,12 @@ let tempoTextString = 'Medium';
 var socket = io();
 
 socket.on('user_start', function(msg) {
+    count = 0
     metronome.start();
 });
 socket.on('user_stop', function(msg) {
     metronome.stop();
+    count = 0
 });
 
 socket.on('user_bpm', function(msg) {
