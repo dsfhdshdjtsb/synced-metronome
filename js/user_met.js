@@ -34,10 +34,10 @@ socket.on('user_bpm', function(msg) {
     updateMetronome();
 });
 
-socket.on('user_bpmeasure', function(msg) {
-    beatsPerMeasure = parseInt(msg);
-    updateMetronome();
-});
+// socket.on('user_bpmeasure', function(msg) {
+//     beatsPerMeasure = parseInt(msg);
+//     updateMetronome();
+// });
 
 enterBtn.addEventListener('click', () => {
     var txt = codeInput.value

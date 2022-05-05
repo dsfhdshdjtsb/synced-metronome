@@ -23,6 +23,7 @@ var socket = io();
 const id = makeid(5);
 
 socket.on('user_start', function(msg) {
+    console.log(id)
     metronome.start();
 });
 socket.on('user_stop', function(msg) {
@@ -32,20 +33,21 @@ socket.on('user_stop', function(msg) {
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
     bpm--;
-    socket.emit('server_bpm', bpm);
+    socket.emit('server_bpm', { BPM: bpm , ID: id} );
     validateTempo();
     updateMetronome();
 });
 increaseTempoBtn.addEventListener('click', () => {
     if (bpm >= 280) { return };
     bpm++;
-    socket.emit('server_bpm', bpm);
+    console.log(bpm)
+    socket.emit('server_bpm', { BPM: bpm , ID: id} );
     validateTempo();
     updateMetronome();
 });
 tempoSlider.addEventListener('input', () => {
     bpm = tempoSlider.value;
-    socket.emit('server_bpm', bpm);
+    socket.emit('server_bpm', { BPM: bpm , ID: id} );
     validateTempo();
     updateMetronome();
 });
