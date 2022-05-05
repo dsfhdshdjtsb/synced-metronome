@@ -26,12 +26,12 @@ var socket = io();
 
 
 socket.on('user_start', function(msg) {
-    metronome.start();
     count = 0;
+    metronome.start();
 });
 socket.on('user_stop', function(msg) {
-    metronome.stop();
     count = 0;
+    metronome.stop();
 });
 
 decreaseTempoBtn.addEventListener('click', () => {
@@ -67,10 +67,12 @@ startStopBtn.addEventListener('click', () => {
     }else{
       count = 0;
       if (!isRunning) {
+          count = 0;
           isRunning = true;
           startStopBtn.textContent = 'STOP';
           socket.emit('master_start', id);
       } else {
+        count = 0;
           isRunning = false;
           startStopBtn.textContent = 'START';
           dot.style.background = "white";
@@ -116,9 +118,9 @@ function playClick() {
         click2.currentTime = 0;
     }
     if (count%2 === 0){
-      dot.style.background = "white";
-    } else{
       dot.style.background = "#fa545c";
+    } else{
+      dot.style.background = "white";
     }
     count++;
 }
