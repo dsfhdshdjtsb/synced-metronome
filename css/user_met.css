@@ -58,9 +58,16 @@ body{
   width: 100%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     .form-inline .form-control {
         width: 150px;
+    }
+    .top-section{
+      height:200px;
+    }
+    .dot{
+      height: 100px;
+      width: 100px;
     }
 }
 
