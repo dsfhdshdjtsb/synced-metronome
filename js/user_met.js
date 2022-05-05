@@ -5,6 +5,8 @@ const tempoText = document.querySelector('.tempo-text');
 const measureCount = document.querySelector('.measure-count');
 const testButton = document.querySelector('.testButton');
 const dot = document.querySelector('.dot');
+const enterBtn = document.querySelector('.troll');
+const codeInput = document.getElementById("code");
 
 // const click1 = new Audio('../audio/click2.mp3');
 // const click2 = new Audio('../audio/click2.mp3');
@@ -19,15 +21,11 @@ let tempoTextString = 'Medium';
 
 var socket = io();
 
-socket.on('user_toggle', function(msg) {
-    if(msg == "start")
-    {
-        metronome.start();
-    }
-    else if(msg == "stop")
-    {
-        metronome.stop();
-    }
+socket.on('user_start', function(msg) {
+    metronome.start();
+});
+socket.on('user_stop', function(msg) {
+    metronome.stop();
 });
 
 socket.on('user_bpm', function(msg) {
@@ -39,6 +37,11 @@ socket.on('user_bpm', function(msg) {
 socket.on('user_bpmeasure', function(msg) {
     beatsPerMeasure = parseInt(msg);
     updateMetronome();
+});
+
+enterBtn.addEventListener('click', () => {
+    var txt = codeInput.value
+    socket.emit('join_room', txt);
 });
 
 function updateMetronome() {

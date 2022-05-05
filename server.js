@@ -13,8 +13,11 @@ app.use(express.static(__dirname + '/'));
 
 io.on('connection', (socket) => {
   //console.log('a user connected');
-  socket.on('server_toggle', (msg) => {
-    io.emit('user_toggle', msg)
+  socket.on('master_start', (msg) => {
+    io.to(msg).emit('user_start', msg)
+  });
+  socket.on('master_stop', (msg) => {
+    io.to(msg).emit('user_stop', msg)
   });
   socket.on('server_bpm', (msg) => {
     console.log("server_bpm" + msg)
@@ -24,6 +27,20 @@ io.on('connection', (socket) => {
     console.log("server_bpmeasure" + msg)
     io.emit('user_bpmeasure', msg)
   });
+  socket.on('join_room', (msg) => {
+    if(io.sockets.adapter.rooms.has(msg))
+    {
+      console.log("joined room " + msg)
+      socket.join(msg);
+    }
+    else{
+      console.log("room " + msg + " not found")
+    }
+  })
+  socket.on('create_room', (msg) => {
+    console.log("created room: " + msg)
+    socket.join(msg);
+  })
 });
 
 app.get('/', function(req, res){
@@ -44,7 +61,7 @@ app.get('/waiting', function(req, res){
 
 let port = process.env.PORT;
 if (port == null || port == "") {
-  port = 8000;
+  port = 3000;
 }
 
 server.listen(port, () => {
