@@ -32,6 +32,19 @@ socket.on('user_stop', function(msg) {
     dot.style.background = "white";
 });
 
+socket.on("user_toggle", function(msg) {
+    count = 0;
+    if(msg == "start")
+    {
+        metronome.start();
+    }
+    else if(msg == "stop")
+    {
+        metronome.stop();
+        dot.style.background = "white";
+    }
+})
+
 socket.on('user_bpm', function(msg) {
     bpm = parseInt(msg);
     console.log("curbpm" + bpm)

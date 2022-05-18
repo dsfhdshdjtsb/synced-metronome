@@ -24,15 +24,19 @@ let lobbyCreated = false;
 let tempoTextString = 'Medium';
 var socket = io();
 
+socket.on("user_toggle", function(msg) {
+    count = 0;
+    if(msg == "start")
+    {
+        metronome.start();
+    }
+    else if(msg == "stop")
+    {
+        metronome.stop();
+        dot.style.background = "white";
+    }
+})
 
-socket.on('user_start', function(msg) {
-    count = 0;
-    metronome.start();
-});
-socket.on('user_stop', function(msg) {
-    count = 0;
-    metronome.stop();
-});
 
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
@@ -41,6 +45,7 @@ decreaseTempoBtn.addEventListener('click', () => {
     validateTempo();
     updateMetronome();
 });
+
 increaseTempoBtn.addEventListener('click', () => {
     if (bpm >= 280) { return };
     bpm++;
@@ -49,6 +54,7 @@ increaseTempoBtn.addEventListener('click', () => {
     validateTempo();
     updateMetronome();
 });
+
 tempoSlider.addEventListener('input', () => {
     bpm = tempoSlider.value;
     socket.emit('server_bpm', { BPM: bpm , ID: id} );
@@ -69,12 +75,12 @@ startStopBtn.addEventListener('click', () => {
       if (!isRunning) {
           isRunning = true;
           startStopBtn.textContent = 'STOP';
-          socket.emit('master_start', id);
+          socket.emit('master_toggle', { toggle: "start" , ID: id});
       } else {
           isRunning = false;
           startStopBtn.textContent = 'START';
           dot.style.background = "white";
-          socket.emit('master_stop', id);
+          socket.emit('master_toggle', { toggle: "stop" , ID: id});
       }
     }
 });
@@ -125,7 +131,7 @@ function playClick() {
 
 function makeid(length) {
     var result           = '';
-    var characters       = 'ABCDEFGHJKMNOPQRSTUVWXYZabcdefghjkmnopqrstuvwxyz0123456789';
+    var characters       = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnopqrstuvwxyz123456789';
     var charactersLength = characters.length;
     for ( var i = 0; i < length; i++ ) {
       result += characters.charAt(Math.floor(Math.random() *

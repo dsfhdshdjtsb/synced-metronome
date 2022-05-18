@@ -13,15 +13,10 @@ app.use(express.static(__dirname + '/'));
 
 io.on('connection', (socket) => {
   //console.log('a user connected');
-  socket.on('master_start', (msg) => {
-    io.to(msg).emit('user_start', msg)
-  });
-  socket.on('master_stop', (msg) => {
-    io.to(msg).emit('user_stop', msg)
+  socket.on('master_toggle', (msg) => {
+      io.to(msg.ID).emit('user_toggle', msg.toggle )
   });
   socket.on('server_bpm', (msg) => {
-    console.log(msg.ID)
-    console.log(msg.BPM)
     io.to(msg.ID).emit('user_bpm', msg.BPM)
   });
   // socket.on('server_bpmeasure', (msg) => {
@@ -50,8 +45,8 @@ app.get('/', function(req, res){
 app.get('/lobby', function(req, res){
   res.sendFile(path.join(__dirname + '/pages/lobby.html'));
 });
-app.get('/server_met', function(req, res){
-  res.sendFile(path.join(__dirname + '/pages/server_met.html'));
+app.get('/master_met', function(req, res){
+  res.sendFile(path.join(__dirname + '/pages/master_met.html'));
 });
 app.get('/user_met', function(req, res){
   res.sendFile(path.join(__dirname + '/pages/user_met.html'));
