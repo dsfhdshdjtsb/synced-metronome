@@ -11,6 +11,7 @@ app.get('/', (req, res) => {
 });
 app.use(express.static(__dirname + '/'));
 
+
 io.on('connection', (socket) => {
   //console.log('a user connected');
   socket.on('master_start', (msg) => {
@@ -29,14 +30,21 @@ io.on('connection', (socket) => {
   //   io.emit('user_bpmeasure', msg)
   // });
   socket.on('join_room', (msg) => {
-    if(io.sockets.adapter.rooms.has(msg))
+    if(io.sockets.adapter.rooms.has(msg.room))
     {
-      console.log("joined room " + msg)
-      socket.join(msg);
+      console.log("joined room " + msg.room)
+      io.to(msg.id).emit("joined", socket.id, msg)
+      socket.join(msg.room);
+      console.log("test")
+      setTimeout(function(){ 
+        io.to(msg.id).emit('user_stop', msg)
+      }, 100)
+      
     }
     else{
-      console.log("room " + msg + " not found")
+      console.log("room " + msg.room + " not found")
     }
+    
   })
   socket.on('create_room', (msg) => {
     console.log("created room: " + msg)

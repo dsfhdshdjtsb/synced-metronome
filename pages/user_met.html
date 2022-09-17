@@ -7,13 +7,16 @@
     <link rel="stylesheet" href="../css/user_met.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Metronome</title>
+    <audio id="click" preload>
+        <source src="../audio/click2.mp3" type="audio/mp3">
+      </audio>
 
 </head>
 <body>
   <div class="top-section">
     <div class="form-group form-inline">
       <input type="text" class="form-control" id="input-code" placeholder="Room ID">
-      <button type="button" class="btn btn-light join-btn">JOIN</button>
+      <button type="button" class="btn btn-light join-btn" >JOIN</button>
     </div>
   </div>
     <div class="container">
@@ -23,10 +26,13 @@
                 <span class="tempo">140</span>
                 <span class="bpm">BPM</span>
                 <div class="tempo-text">Vivace</div>
+                <!-- Rounded switch -->
             </div>
         </div>
+        
+        
     </div>
-
+    <script src="../js/metronome.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../js/user_met.js" type="module"></script>
 </body>
