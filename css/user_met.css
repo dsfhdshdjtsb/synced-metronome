@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&family=Rubik&display=swap');
 
 body{
-  font-family: "Raleway", sans-serif;
+  font-family: "Rubik", sans-serif;
 }
 
 .container {
@@ -32,6 +32,7 @@ body{
     font-size: 1.3em;
     text-transform: uppercase;
     text-align: center;
+    font-family: "Raleway", sans-serif;
 }
 
 .tempo-settings {
@@ -52,6 +53,7 @@ body{
     text-align: center;
     font-size: 1.5em;
     text-transform: uppercase;
+    
 }
 
 .form-control{
@@ -82,6 +84,7 @@ body{
 
 .join-btn {
   color: #fa545c;
+  font-family: "Raleway", sans-serif;
 }
 
 .btn:hover{

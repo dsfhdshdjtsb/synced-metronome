@@ -38,14 +38,15 @@ io.on('connection', (socket) => {
       console.log("joined room " + msg.room)
       io.to(msg.id).emit("joined", socket.id, msg)
       socket.join(msg.room);
-      console.log("test")
       setTimeout(function(){ 
         io.to(msg.id).emit('user_stop', msg)
       }, 100)
       
     }
     else{
+      console.log(msg)
       console.log("room " + msg.room + " not found")
+      io.to(msg.id).emit("not found", msg)
     }
     
   })

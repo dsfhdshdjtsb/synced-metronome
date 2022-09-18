@@ -27,6 +27,12 @@ socket.on('joined', function(msg){
     enterBtn.innerHTML = 'Joined!';
 })
 
+socket.on('not found', function(msg) {
+    enterBtn.innerHTML = 'Not found!';
+    setTimeout(function(){ 
+        enterBtn.innerHTML = 'JOIN';
+      }, 1000)
+})
 enterBtn.addEventListener('click', () => {
     var txt = codeInput.value
     socket.emit('join_room', { room: txt , id: socket.id});

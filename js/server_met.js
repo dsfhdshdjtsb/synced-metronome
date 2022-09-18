@@ -6,7 +6,6 @@ const tempoSlider = document.querySelector('.slider');
 const startStopBtn = document.querySelector('.start-stop');
 const dot = document.querySelector('.dot');
 const code = document.querySelector('.code');
-const id = makeid(5)
 
 
 let bpm = 140;
@@ -14,6 +13,7 @@ let isRunning = false;
 let lobbyCreated = false;
 let tempoTextString = 'Medium';
 var socket = io();
+const id = makeid(5)
 
 var metronome = new Metronome(dot);
 var pinger = new Pinger(socket, id);
@@ -99,7 +99,7 @@ function updateMetronome() {
 
 function makeid(length) {
     var result           = '';
-    var characters       = 'ABCDEFGHJKMNOPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz123456789';
+    var characters       = 'BCDFGHJKMNPQRSTVWXYZbcdfghkmnpqrstvwxyz23456789';
     var charactersLength = characters.length;
     for ( var i = 0; i < length; i++ ) {
       result += characters.charAt(Math.floor(Math.random() *
