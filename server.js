@@ -28,7 +28,8 @@ io.on('connection', (socket) => {
     io.to(msg.ID).emit('user_bpm', msg.BPM)
   });
   socket.on('ping', (msg) => {
-    io.to(msg.ID).emit('user_ping', msg.start)
+    console.log(msg)
+    io.to(msg.ID).emit('ping', msg)
   })
   socket.on('join_room', (msg) => {
     if(io.sockets.adapter.rooms.has(msg.room))

@@ -4,12 +4,19 @@ const dot = document.querySelector('.dot');
 const enterBtn = document.querySelector('.join-btn');
 const codeInput = document.querySelector('.form-control');
 
+
 var metronome = new Metronome(dot);
 let bpm = 140;
 let tempoTextString = 'Medium';
-  
-
 var socket = io();
+console.log(socket.id)
+var pinger;
+
+var avgPing = 0;
+var totalPing = 0;
+var counter = 0;
+var timeDif = 0;
+
 socket.on('user_start', function(msg) {
     metronome.start();
     
@@ -25,11 +32,24 @@ socket.on('user_bpm', function(msg) {
 
 socket.on('joined', function(msg){
     enterBtn.innerHTML = 'Joined!';
+    pinger = new Pinger(socket, socket.id)
+    pinger.startPing();
+    setTimeout(function(){ 
+        pinger.stopPing();
+      }, 5000)
 })
 
-// socket.on('ping' , (msg) => {
-//     socket.emit('ping', {start: msg, id: socket.id})
-// })
+socket.on('ping' , (msg) => {
+    counter++
+    totalPing += Date.now() - msg.start;
+    if(counter > 100 )
+    {
+        avgPing = totalPing / (counter * 2)
+        console.log(avgPing);
+        pinger.stopPing(); 
+        counter = totalPing = 0;
+    }
+})
 
 // socket.on('result', (msg) =>{
 //     console.log(msg);
@@ -42,6 +62,7 @@ socket.on('not found', function(msg) {
 })
 
 enterBtn.addEventListener('click', () => {
+    console.log(socket.id)
     var txt = codeInput.value
     socket.emit('join_room', { room: txt , id: socket.id});
 
