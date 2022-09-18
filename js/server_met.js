@@ -57,7 +57,7 @@ startStopBtn.addEventListener('click', () => {
         setTimeout(function(){ 
             socket.emit('master_stop', id);
         }, 100)
-
+//test
         lobbyCreated = true;
     }else{
       if (!isRunning) {
