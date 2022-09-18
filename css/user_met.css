@@ -24,7 +24,7 @@ body{
     font-weight: bold;
 }
 .bpm-display .tempo {
-    font-size: 7em;
+    font-size: 6em;
     font-family: "Rubik", sans-serif;
 }
 .tempo-text {
@@ -40,8 +40,8 @@ body{
 }
 
 .dot {
-  height: 150px;
-  width: 150px;
+  height: 200px;
+  width: 200px;
   border: 2px solid;
   background-color: white;
   border-radius: 50%;
@@ -68,8 +68,8 @@ body{
       height:200px;
     }
     .dot{
-      height: 100px;
-      width: 100px;
+      height: 200px;
+      width: 200px;
     }
 }
 
