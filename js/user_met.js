@@ -11,10 +11,12 @@ let tempoTextString = 'Medium';
 var socket = io();
 console.log(socket.id)
 var pinger;
-
+var timeInterval;
 var avgPing = 0;
 var totalPing = 0;
 var counter = 0;
+
+var totalTimeDif = 0;
 var timeDif = 0;
 
 socket.on('user_start', function(msg) {
@@ -36,7 +38,8 @@ socket.on('joined', function(msg){
     pinger.startPing();
     setTimeout(function(){ 
         pinger.stopPing();
-      }, 5000)
+      }, 1500)
+
 })
 
 socket.on('ping' , (msg) => {
@@ -48,9 +51,25 @@ socket.on('ping' , (msg) => {
         console.log(avgPing);
         pinger.stopPing(); 
         counter = totalPing = 0;
+
+        timeInterval = setInterval(() => {
+            socket.emit('get_time', {ID: socket.id});
+          }, 10);
     }
 })
 
+socket.on('time', (msg) => {
+    counter++
+    totalTimeDif += (msg + avgPing) - Date.now();
+    
+    if(counter > 100)
+    {
+        timeDif = totalTimeDif / (counter)
+        console.log(timeDif)
+        counter = totalTimeDif = 0;
+        clearInterval(timeInterval);
+    }
+})
 // socket.on('result', (msg) =>{
 //     console.log(msg);
 // })

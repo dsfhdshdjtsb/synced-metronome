@@ -51,7 +51,10 @@ io.on('connection', (socket) => {
       console.log("room " + msg.room + " not found")
       io.to(msg.id).emit("not found", msg)
     }
-    
+  })
+  socket.on('get_time', (msg) => {
+    console.log('get time');
+    io.to(msg.ID).emit("time", Date.now());
   })
   socket.on('create_room', (msg) => {
     console.log("created room: " + msg)
