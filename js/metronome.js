@@ -66,7 +66,6 @@ class Metronome
         setTimeout(function(){ 
             dot.style.background = "white"
           }, 100)
-        console.log(this.dot.style.background)
         // if(this.dot.style.background = "white")
         // {
         //     this.dot.style.background = "#fa545c";
@@ -75,7 +74,6 @@ class Metronome
         // {
         //     this.dot.style.background = "white";
         // }
-        console.log(this.dot.style.background)
     }
 
     start()
