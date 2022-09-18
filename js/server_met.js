@@ -26,7 +26,15 @@ var totalTimeDif = 0;
 var timeDif = 0;
 
 socket.on('user_start', function(msg) {
-    metronome.start();
+    let timeToStart = msg - Date.now() - timeDif;
+    console.log("server time: " + msg)
+    console.log("my time: " + Date.now())
+    console.log("ping:" + avgPing)
+    console.log("timdif:" + timeDif)
+    console.log("start: " + timeToStart)
+    setTimeout(function(){ 
+        metronome.start();
+      }, timeToStart)
 });
 socket.on('user_stop', function(msg) {
     metronome.stop();
@@ -39,34 +47,64 @@ socket.on('room taken', function(msg){
     code.textContent = "error: refresh page";
 })
 
+
+socket.on('start_ping', (msg) => {
+    // pinger = setInterval(() => {
+    //     socket.emit('ping', {ID: socket.id, start: Date.now()})
+    // }, 5)
+    socket.emit('ping', {ID: socket.id, start: Date.now()})
+})
 socket.on('ping' , (msg) => {
-    counter++
-    totalPing += Date.now() - msg.start;
-    if(counter > 200 )
-    {
-        avgPing = totalPing / (counter * 2)
-        console.log(avgPing);
-        pinger.stopPing(); 
-        counter = totalPing = 0;
-
-        timeInterval = setInterval(() => {
-            socket.emit('get_time', {ID: socket.id});
-          }, 5);
-    }
+    avgPing = Date.now() - msg.start;
+    socket.emit('get_time', {ID: socket.id});
 })
-
+// socket.on('ping' , (msg) => {
+//     counter++
+//     totalPing += Date.now() - msg.start;
+//     console.log(msg)
+//     if(counter > 200 )
+//     {
+//         avgPing = totalPing / (counter * 2)
+//         console.log(avgPing);
+//         counter = totalPing = 0;
+//         clearInterval(pinger)
+        
+//         timeInterval = setInterval(() => {
+//             socket.emit('get_time', {ID: socket.id});
+//           }, 5);
+//     }
+// })
 socket.on('time', (msg) => {
-    counter++
-    totalTimeDif += (msg + avgPing) - Date.now();
-    
-    if(counter > 200)
+    timeDif = msg - Date.now();
+    if(timeDif <= 0)
     {
-        timeDif = totalTimeDif / (counter)
-        console.log(timeDif)
-        counter = totalTimeDif = 0;
-        clearInterval(timeInterval);
+        timeDif += avgPing
+    }
+    else
+    {
+        timeDif -= avgPing
     }
 })
+// socket.on('time', (msg) => {
+//     counter++
+//     totalTimeDif += (msg - Date.now());
+//     if(totalTimeDif <= 0)
+//     {
+//         totalTimeDif += avgPing
+//     }
+//     else
+//     {
+//         totalTimeDif -= avgPing
+//     }
+
+//     if(counter > 200)
+//     {
+//         timeDif = totalTimeDif / (counter)
+//         console.log(timeDif)
+//         counter = totalTimeDif = 0;
+//         clearInterval(timeInterval);
+//     }
+// })
 
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
@@ -98,11 +136,11 @@ startStopBtn.addEventListener('click', () => {
             socket.emit('master_stop', id);
         }, 100)
 
-        pinger = new Pinger(socket, socket.id)
-        pinger.startPing();
-        setTimeout(function(){ 
-            pinger.stopPing();
-      }, 10000)
+    //     pinger = new Pinger(socket, socket.id)
+    //     pinger.startPing();
+    //     setTimeout(function(){ 
+    //         pinger.stopPing();
+    //   }, 10000)
 //test
         lobbyCreated = true;
     }else{

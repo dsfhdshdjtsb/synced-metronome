@@ -4,6 +4,7 @@ const path = require('path');
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+const { isBoolean } = require('tone');
 const io = new Server(server);
 
 app.get('/', (req, res) => {
@@ -11,13 +12,20 @@ app.get('/', (req, res) => {
 });
 app.use(express.static(__dirname + '/'));
 
-// var interval;
-// var counter = 0;
+var interval;
+var counter = 0;
 // var total = 0;
 io.on('connection', (socket) => {
   //console.log('a user connected');
   socket.on('master_start', (msg) => {
-    io.to(msg).emit('user_start', msg)
+
+    io.to(msg).emit('start_ping', msg)
+    io.to(msg).emit('user_start', Date.now() + 500)
+    // setTimeout(function(){ 
+    //   io.to(msg).emit('user_start', Date.now() + 500)
+    // }, 10)
+
+
   });
   socket.on('master_stop', (msg) => {
     io.to(msg).emit('user_stop', msg)
