@@ -9,7 +9,6 @@ var metronome = new Metronome(dot);
 let bpm = 140;
 let tempoTextString = 'Medium';
 var socket = io();
-console.log(socket.id)
 var pinger;
 var timeInterval;
 var avgPing = 0;
@@ -38,14 +37,14 @@ socket.on('joined', function(msg){
     pinger.startPing();
     setTimeout(function(){ 
         pinger.stopPing();
-      }, 1500)
+      }, 10000)
 
 })
 
 socket.on('ping' , (msg) => {
     counter++
     totalPing += Date.now() - msg.start;
-    if(counter > 100 )
+    if(counter > 200 )
     {
         avgPing = totalPing / (counter * 2)
         console.log(avgPing);
@@ -54,7 +53,7 @@ socket.on('ping' , (msg) => {
 
         timeInterval = setInterval(() => {
             socket.emit('get_time', {ID: socket.id});
-          }, 10);
+          }, 5);
     }
 })
 
@@ -62,7 +61,7 @@ socket.on('time', (msg) => {
     counter++
     totalTimeDif += (msg + avgPing) - Date.now();
     
-    if(counter > 100)
+    if(counter > 200)
     {
         timeDif = totalTimeDif / (counter)
         console.log(timeDif)

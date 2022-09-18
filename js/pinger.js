@@ -13,7 +13,7 @@ class Pinger
             const start = Date.now();
             console.log("id:" + this.id)
             this.socket.emit("ping", { start: start, ID: this.id})
-          }, 10);
+          }, 5);
     }
 
     stopPing()

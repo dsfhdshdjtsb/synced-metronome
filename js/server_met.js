@@ -16,7 +16,14 @@ var socket = io();
 const id = makeid(5)
 
 var metronome = new Metronome(dot);
-var pinger = new Pinger(socket, id);
+var pinger;
+var timeInterval;
+var avgPing = 0;
+var totalPing = 0;
+var counter = 0;
+
+var totalTimeDif = 0;
+var timeDif = 0;
 
 socket.on('user_start', function(msg) {
     metronome.start();
@@ -31,6 +38,36 @@ socket.on('user_ping', function(msg){
 socket.on('room taken', function(msg){
     code.textContent = "error: refresh page";
 })
+
+socket.on('ping' , (msg) => {
+    counter++
+    totalPing += Date.now() - msg.start;
+    if(counter > 200 )
+    {
+        avgPing = totalPing / (counter * 2)
+        console.log(avgPing);
+        pinger.stopPing(); 
+        counter = totalPing = 0;
+
+        timeInterval = setInterval(() => {
+            socket.emit('get_time', {ID: socket.id});
+          }, 5);
+    }
+})
+
+socket.on('time', (msg) => {
+    counter++
+    totalTimeDif += (msg + avgPing) - Date.now();
+    
+    if(counter > 200)
+    {
+        timeDif = totalTimeDif / (counter)
+        console.log(timeDif)
+        counter = totalTimeDif = 0;
+        clearInterval(timeInterval);
+    }
+})
+
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
     bpm--;
@@ -60,6 +97,12 @@ startStopBtn.addEventListener('click', () => {
         setTimeout(function(){ 
             socket.emit('master_stop', id);
         }, 100)
+
+        pinger = new Pinger(socket, socket.id)
+        pinger.startPing();
+        setTimeout(function(){ 
+            pinger.stopPing();
+      }, 10000)
 //test
         lobbyCreated = true;
     }else{
