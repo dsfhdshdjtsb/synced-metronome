@@ -13,6 +13,7 @@ app.use(express.static(__dirname + '/'));
 
 var interval;
 var counter = 0;
+var total = 0;
 io.on('connection', (socket) => {
   //console.log('a user connected');
   socket.on('master_start', (msg) => {
@@ -45,7 +46,7 @@ io.on('connection', (socket) => {
       interval = setInterval(() => {
         const start = Date.now();
       
-        io.to(msg.id).emit("ping", { start: start, ID: this.id})
+        io.to(msg.id).emit("ping", start)
       }, 10);
     }
     else{
@@ -61,11 +62,15 @@ io.on('connection', (socket) => {
   })
 
   socket.on('ping', (msg) => {
-    console.log(Date.now() - msg.start);
+    let delay = Date.now() - msg.start
+    console.log(delay);
     counter++
+    total += delay;
     if(counter > 100)
     {
+      io.to(msg.id).emit("result", total/counter)
       counter = 0;
+      total = 0;
       clearInterval(interval)
     }
   })

@@ -28,7 +28,11 @@ socket.on('joined', function(msg){
 })
 
 socket.on('ping' , (msg) => {
-    socket.emit('ping', msg)
+    socket.emit('ping', {start: msg, id: socket.id})
+})
+
+socket.on('result', (msg) =>{
+    console.log(msg);
 })
 socket.on('not found', function(msg) {
     enterBtn.innerHTML = 'Not found!';
@@ -36,6 +40,7 @@ socket.on('not found', function(msg) {
         enterBtn.innerHTML = 'JOIN';
       }, 1000)
 })
+
 enterBtn.addEventListener('click', () => {
     var txt = codeInput.value
     socket.emit('join_room', { room: txt , id: socket.id});
