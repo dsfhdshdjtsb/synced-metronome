@@ -11,7 +11,8 @@ app.get('/', (req, res) => {
 });
 app.use(express.static(__dirname + '/'));
 
-
+var interval;
+var counter = 0;
 io.on('connection', (socket) => {
   //console.log('a user connected');
   socket.on('master_start', (msg) => {
@@ -41,7 +42,11 @@ io.on('connection', (socket) => {
       setTimeout(function(){ 
         io.to(msg.id).emit('user_stop', msg)
       }, 100)
+      interval = setInterval(() => {
+        const start = Date.now();
       
+        io.to(msg.id).emit("ping", { start: start, ID: this.id})
+      }, 10);
     }
     else{
       console.log(msg)
@@ -54,7 +59,19 @@ io.on('connection', (socket) => {
     console.log("created room: " + msg)
     socket.join(msg);
   })
+
+  socket.on('ping', (msg) => {
+    console.log(Date.now() - msg.start);
+    counter++
+    if(counter > 100)
+    {
+      counter = 0;
+      clearInterval(interval)
+    }
+  })
 });
+
+
 
 app.get('/', function(req, res){
   res.sendFile(path.join(__dirname + '/index.html'));

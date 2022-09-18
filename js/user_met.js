@@ -27,6 +27,9 @@ socket.on('joined', function(msg){
     enterBtn.innerHTML = 'Joined!';
 })
 
+socket.on('ping' , (msg) => {
+    socket.emit('ping', msg)
+})
 socket.on('not found', function(msg) {
     enterBtn.innerHTML = 'Not found!';
     setTimeout(function(){ 
