@@ -27,13 +27,13 @@ socket.on('joined', function(msg){
     enterBtn.innerHTML = 'Joined!';
 })
 
-socket.on('ping' , (msg) => {
-    socket.emit('ping', {start: msg, id: socket.id})
-})
+// socket.on('ping' , (msg) => {
+//     socket.emit('ping', {start: msg, id: socket.id})
+// })
 
-socket.on('result', (msg) =>{
-    console.log(msg);
-})
+// socket.on('result', (msg) =>{
+//     console.log(msg);
+// })
 socket.on('not found', function(msg) {
     enterBtn.innerHTML = 'Not found!';
     setTimeout(function(){ 

@@ -11,9 +11,9 @@ app.get('/', (req, res) => {
 });
 app.use(express.static(__dirname + '/'));
 
-var interval;
-var counter = 0;
-var total = 0;
+// var interval;
+// var counter = 0;
+// var total = 0;
 io.on('connection', (socket) => {
   //console.log('a user connected');
   socket.on('master_start', (msg) => {
@@ -30,10 +30,6 @@ io.on('connection', (socket) => {
   socket.on('ping', (msg) => {
     io.to(msg.ID).emit('user_ping', msg.start)
   })
-  // socket.on('server_bpmeasure', (msg) => {
-  //   console.log("server_bpmeasure" + msg)
-  //   io.emit('user_bpmeasure', msg)
-  // });
   socket.on('join_room', (msg) => {
     if(io.sockets.adapter.rooms.has(msg.room))
     {
@@ -43,11 +39,11 @@ io.on('connection', (socket) => {
       setTimeout(function(){ 
         io.to(msg.id).emit('user_stop', msg)
       }, 100)
-      interval = setInterval(() => {
-        const start = Date.now();
+      // interval = setInterval(() => {
+      //   const start = Date.now();
       
-        io.to(msg.id).emit("ping", start)
-      }, 10);
+      //   io.to(msg.id).emit("ping", start)
+      // }, 10);
     }
     else{
       console.log(msg)
@@ -61,19 +57,19 @@ io.on('connection', (socket) => {
     socket.join(msg);
   })
 
-  socket.on('ping', (msg) => {
-    let delay = Date.now() - msg.start
-    console.log(delay);
-    counter++
-    total += delay;
-    if(counter > 100)
-    {
-      io.to(msg.id).emit("result", total/counter)
-      counter = 0;
-      total = 0;
-      clearInterval(interval)
-    }
-  })
+  // socket.on('ping', (msg) => {
+  //   let delay = Date.now() - msg.start
+  //   console.log(delay);
+  //   counter++
+  //   total += delay;
+  //   if(counter > 100)
+  //   {
+  //     io.to(msg.id).emit("result", total/counter)
+  //     counter = 0;
+  //     total = 0;
+  //     clearInterval(interval)
+  //   }
+  // })
 });
 
 
