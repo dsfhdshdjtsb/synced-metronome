@@ -54,7 +54,15 @@ io.on('connection', (socket) => {
   })
   socket.on('create_room', (msg) => {
     console.log("created room: " + msg)
-    socket.join(msg);
+    if(io.sockets.adapter.rooms.has(msg.room))
+    {
+      io.to(msg.id).emit('room taken', msg)
+    }
+    else
+    {
+      socket.join(msg.room);
+    }
+    
   })
 
   // socket.on('ping', (msg) => {

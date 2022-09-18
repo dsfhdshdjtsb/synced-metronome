@@ -28,6 +28,9 @@ socket.on('user_ping', function(msg){
     console.log(Date.now() - msg);
 })
 
+socket.on('room taken', function(msg){
+    code.textContent = "error: refresh page";
+})
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
     bpm--;
@@ -52,7 +55,7 @@ startStopBtn.addEventListener('click', () => {
     if(lobbyCreated === false){
         startStopBtn.textContent = "START";
         code.textContent = id;
-        socket.emit('create_room', id);
+        socket.emit('create_room', {room: id, id: socket.id}); //i realize this is confusing so if ur lookinga t this gl im too lazy to fix
         metronome.start();
         setTimeout(function(){ 
             socket.emit('master_stop', id);
