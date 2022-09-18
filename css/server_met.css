@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&family=Rubik&display=swap');
 
 body{
-  font-family: "Raleway", sans-serif;
+  font-family: "Rubik", sans-serif;
 }
 
 .container {
@@ -31,6 +31,7 @@ body{
     font-size: .8em;
     text-transform: uppercase;
     text-align: center;
+    font-family: "Raleway", sans-serif;
 }
 
 .tempo-settings {
@@ -139,6 +140,7 @@ input[type=range]::-moz-range-track {
     line-height: 50px;
     margin: 0 auto;
     cursor: pointer;
+    font-family: "Raleway", sans-serif;
 }
 
 .start-stop:hover {

@@ -26,6 +26,7 @@ body{
 }
 .bpm-display .tempo {
     font-size: 7em;
+    font-family: "Rubik", sans-serif;
 }
 .tempo-text {
     font-size: 1.3em;

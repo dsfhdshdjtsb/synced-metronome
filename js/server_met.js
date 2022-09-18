@@ -63,12 +63,12 @@ startStopBtn.addEventListener('click', () => {
       if (!isRunning) {
           isRunning = true;
           startStopBtn.textContent = 'STOP';
-          socket.emit('server_bpm', { BPM: bpm , ID: id} );
+        //   socket.emit('server_bpm', { BPM: bpm , ID: id} );
           socket.emit('master_start', id);
 
-          pinger.startPing()
+        //   pinger.startPing()
       } else {
-        pinger.stopPing()
+        // pinger.stopPing()
           isRunning = false;
           startStopBtn.textContent = 'START';
           dot.style.background = "white";
@@ -99,7 +99,7 @@ function updateMetronome() {
 
 function makeid(length) {
     var result           = '';
-    var characters       = 'ABCDEFGHJKMNOPQRSTUVWXYZabcdefghjkmnopqrstuvwxyz123456789';
+    var characters       = 'ABCDEFGHJKMNOPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz123456789';
     var charactersLength = characters.length;
     for ( var i = 0; i < length; i++ ) {
       result += characters.charAt(Math.floor(Math.random() *
