@@ -8,7 +8,6 @@ const dot = document.querySelector('.dot');
 const code = document.querySelector('.code');
 const id = makeid(5)
 
-var metronome = new Metronome(dot);
 
 let bpm = 140;
 let isRunning = false;
@@ -16,6 +15,8 @@ let lobbyCreated = false;
 let tempoTextString = 'Medium';
 var socket = io();
 
+var metronome = new Metronome(dot);
+var pinger = new Pinger(socket, id);
 
 socket.on('user_start', function(msg) {
     metronome.start();
@@ -23,6 +24,9 @@ socket.on('user_start', function(msg) {
 socket.on('user_stop', function(msg) {
     metronome.stop();
 });
+socket.on('user_ping', function(msg){
+    console.log(Date.now() - msg);
+})
 
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
@@ -43,12 +47,12 @@ tempoSlider.addEventListener('input', () => {
 });
 
 
+
 startStopBtn.addEventListener('click', () => {
     if(lobbyCreated === false){
         startStopBtn.textContent = "START";
         code.textContent = id;
         socket.emit('create_room', id);
-        
         metronome.start();
         setTimeout(function(){ 
             socket.emit('master_stop', id);
@@ -61,6 +65,8 @@ startStopBtn.addEventListener('click', () => {
           startStopBtn.textContent = 'STOP';
           socket.emit('server_bpm', { BPM: bpm , ID: id} );
           socket.emit('master_start', id);
+
+          pinger.startPing()
       } else {
           isRunning = false;
           startStopBtn.textContent = 'START';

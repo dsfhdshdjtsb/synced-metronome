@@ -25,6 +25,9 @@ io.on('connection', (socket) => {
     console.log(msg.BPM)
     io.to(msg.ID).emit('user_bpm', msg.BPM)
   });
+  socket.on('ping', (msg) => {
+    io.to(msg.ID).emit('user_ping', msg.start)
+  })
   // socket.on('server_bpmeasure', (msg) => {
   //   console.log("server_bpmeasure" + msg)
   //   io.emit('user_bpmeasure', msg)
