@@ -66,7 +66,7 @@ startStopBtn.addEventListener('click', () => {
           socket.emit('server_bpm', { BPM: bpm , ID: id} );
           socket.emit('master_start', id);
 
-          pinger.startPing()
+        //   pinger.startPing()
       } else {
           isRunning = false;
           startStopBtn.textContent = 'START';
