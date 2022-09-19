@@ -81,11 +81,11 @@ socket.on('time', (msg) => {
     timeDif = msg - Date.now();
     if(timeDif <= 0)
     {
-        timeDif += avgPing
+        timeDif += 2 * avgPing
     }
     else
     {
-        timeDif -= avgPing
+        timeDif -= 2 * avgPing
     }
 })
 // socket.on('time', (msg) => {
