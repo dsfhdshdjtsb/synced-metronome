@@ -18,9 +18,12 @@ var counter = 0;
 io.on('connection', (socket) => {
   //console.log('a user connected');
   socket.on('master_start', (msg) => {
-
-    io.to(msg).emit('start_ping', msg)
-    io.to(msg).emit('user_start', Date.now() + 500)
+    io.to(msg).emit('start_ping', Date.now())
+    
+    setTimeout(function(){ 
+      io.to(msg).emit('user_start', Date.now() + 500)
+    }, 50)
+    
     // setTimeout(function(){ 
     //   io.to(msg).emit('user_start', Date.now() + 500)
     // }, 10)
@@ -37,7 +40,7 @@ io.on('connection', (socket) => {
   });
   socket.on('ping', (msg) => {
     console.log(msg)
-    io.to(msg.ID).emit('ping', msg)
+    io.to(msg.ID).emit('ping', Date.now() - msg.start)
   })
   socket.on('join_room', (msg) => {
     if(io.sockets.adapter.rooms.has(msg.room))
@@ -62,7 +65,8 @@ io.on('connection', (socket) => {
   })
   socket.on('get_time', (msg) => {
     console.log('get time');
-    io.to(msg.ID).emit("time", Date.now());
+    timeDif = (msg.time + msg.ping) - Date.now();
+    io.to(msg.ID).emit('set_time', timeDif);
   })
   socket.on('create_room', (msg) => {
     console.log("created room: " + msg)

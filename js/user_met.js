@@ -19,17 +19,16 @@ var totalTimeDif = 0;
 var timeDif = 0;
 
 socket.on('user_start', function(msg) {
+    let timeToStart = msg - Date.now() + timeDif;
+    //- Date.now() - timeDif
     console.log("server time: " + msg)
     console.log("my time: " + Date.now())
-    console.log("timdif:" + timeDif)
-    let timeToStart = msg - Date.now() - timeDif;
-    console.log("start: " + timeToStart)
     console.log("ping:" + avgPing)
+    console.log("timdif:" + timeDif)
+    console.log("start: " + timeToStart)
     setTimeout(function(){ 
         metronome.start();
       }, timeToStart)
-    
-    
 });
 socket.on('user_stop', function(msg) {
   metronome.stop();
@@ -50,16 +49,20 @@ socket.on('joined', function(msg){
 
 })
 
-
 socket.on('start_ping', (msg) => {
     // pinger = setInterval(() => {
     //     socket.emit('ping', {ID: socket.id, start: Date.now()})
     // }, 5)
-    socket.emit('ping', {ID: socket.id, start: Date.now()})
+    socket.emit('ping', {ID: socket.id, start: msg})
 })
 socket.on('ping' , (msg) => {
-    avgPing = Date.now() - msg.start;
-    socket.emit('get_time', {ID: socket.id});
+    console.log(msg)
+    avgPing = msg;
+    socket.emit('get_time', {ID: socket.id, time: Date.now(), ping: avgPing});
+})
+
+socket.on('set_time', (msg) =>{
+    timeDif = msg;
 })
 // socket.on('ping' , (msg) => {
 //     counter++
@@ -79,13 +82,16 @@ socket.on('ping' , (msg) => {
 // })
 socket.on('time', (msg) => {
     timeDif = msg - Date.now();
+    console.log(msg)
+    console.log(Date.now());
+    console.log("b4 ping time: " + timeDif)
     if(timeDif <= 0)
     {
-        timeDif += 2 * avgPing
+        timeDif += avgPing
     }
     else
     {
-        timeDif -= 2 * avgPing
+        timeDif -= avgPing
     }
 })
 // socket.on('time', (msg) => {
@@ -107,9 +113,6 @@ socket.on('time', (msg) => {
 //         counter = totalTimeDif = 0;
 //         clearInterval(timeInterval);
 //     }
-// })
-// socket.on('result', (msg) =>{
-//     console.log(msg);
 // })
 socket.on('not found', function(msg) {
     enterBtn.innerHTML = 'Not found!';
