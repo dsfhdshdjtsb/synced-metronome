@@ -15,8 +15,9 @@ let tempoTextString = 'Medium';
 var socket = io();
 const id = makeid(5)
 
+var offsets = [];
+
 var metronome = new Metronome(dot);
-var pinger = new Pinger(socket, id);
 
 socket.on('user_start', function(msg) {
     metronome.start();
@@ -24,18 +25,30 @@ socket.on('user_start', function(msg) {
 socket.on('user_stop', function(msg) {
     metronome.stop();
 });
-socket.on('user_ping', function(msg){
-    console.log(Date.now() - msg);
+
+function genOffsets(){
+    offsets = [];
+    socket.emit('ping', {roomId: id, masterId: socket.id, startTime: Date.now()});
+}
+
+socket.on('return_ping', (msg)=>{
+    let afterTime = Date.now();
+    let offset = (afterTime-msg.startTime)/2;
+    console.log(offset);
+    offsets.push({ clientId: msg.clientId, offset: offset });
+    console.log(offsets);
 })
 
 socket.on('room taken', function(msg){
     code.textContent = "error: refresh page";
 })
+
 decreaseTempoBtn.addEventListener('click', () => {
-    if (bpm <= 20) { return };
-    bpm--;
-    socket.emit('server_bpm', { BPM: bpm , ID: id} );
-    updateMetronome();
+    genOffsets();
+    // if (bpm <= 20) { return };
+    // bpm--;
+    // socket.emit('server_bpm', { BPM: bpm , ID: id} );
+    // updateMetronome();
 });
 increaseTempoBtn.addEventListener('click', () => {
     if (bpm >= 280) { return };
@@ -60,7 +73,7 @@ startStopBtn.addEventListener('click', () => {
         setTimeout(function(){ 
             socket.emit('master_stop', id);
         }, 100)
-//test
+
         lobbyCreated = true;
     }else{
       if (!isRunning) {
@@ -69,9 +82,7 @@ startStopBtn.addEventListener('click', () => {
           socket.emit('server_bpm', { BPM: bpm , ID: id} );
           socket.emit('master_start', id);
 
-        //   pinger.startPing()
       } else {
-        // pinger.stopPing()
           isRunning = false;
           startStopBtn.textContent = 'START';
           dot.style.background = "white";

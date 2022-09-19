@@ -27,9 +27,13 @@ io.on('connection', (socket) => {
     console.log(msg.BPM)
     io.to(msg.ID).emit('user_bpm', msg.BPM)
   });
-  socket.on('ping', (msg) => {
-    io.to(msg.ID).emit('user_ping', msg.start)
+  socket.on('ping', (msg)=> {
+    io.to(msg.roomId).emit('ping', {masterId: msg.masterId, startTime: msg.startTime});
   })
+  socket.on('return_ping', (msg)=>{
+    io.to(msg.masterId).emit("return_ping", {startTime: msg.startTime, clientId: msg.clientId});
+  })
+
   socket.on('join_room', (msg) => {
     if(io.sockets.adapter.rooms.has(msg.room))
     {

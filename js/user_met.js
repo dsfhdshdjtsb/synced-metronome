@@ -27,9 +27,9 @@ socket.on('joined', function(msg){
     enterBtn.innerHTML = 'Joined!';
 })
 
-// socket.on('ping' , (msg) => {
-//     socket.emit('ping', {start: msg, id: socket.id})
-// })
+socket.on('ping' , (msg) => {
+    socket.emit('return_ping', {masterId: msg.masterId, startTime:msg.startTime, clientId: socket.id});
+})
 
 // socket.on('result', (msg) =>{
 //     console.log(msg);
