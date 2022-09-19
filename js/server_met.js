@@ -28,15 +28,29 @@ socket.on('user_stop', function(msg) {
 
 function genOffsets(){
     offsets = [];
-    socket.emit('ping', {roomId: id, masterId: socket.id, startTime: Date.now()});
+    for (let i = 0; i < 10; i++){
+        socket.emit('ping', {roomId: id, masterId: socket.id, startTime: Date.now()});
+    }
+    console.log(averageOffsets());
+}
+
+function averageOffsets(){
+    holder = {};
+    offsets.forEach(offset => {
+        if (offset.name in holder){
+            holder[offset.name] += offset.offset;
+        }
+    })
+
+    holder.forEach(offset =>{
+        console.log(offset.offset/10);
+    })
 }
 
 socket.on('return_ping', (msg)=>{
     let afterTime = Date.now();
     let offset = (afterTime-msg.startTime)/2;
-    console.log(offset);
     offsets.push({ clientId: msg.clientId, offset: offset });
-    console.log(offsets);
 })
 
 socket.on('room taken', function(msg){
