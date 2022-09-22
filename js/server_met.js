@@ -97,9 +97,10 @@ startStopBtn.addEventListener('click', () => {
         ping().then(()=>{ //after ping has been resolved
             console.log(offsets);
             offsets.forEach(client=>{ 
+                console.log("Time at iteration ", multiplier, " of loop: ", Date.now());
                 setTimeout(()=>{ //sets a timeout to have all clients send in 500ms by subtracting their offsets
                     socket.emit('ntp_start', client.clientId); 
-                    console.log("starting client ", client.clientId);
+                    console.log("starting client ", client.clientId, " at time: ", Date.now());
                 }, 500-client.offset); //+(multiplier*10)
                 multiplier++;
             })
@@ -110,6 +111,7 @@ startStopBtn.addEventListener('click', () => {
             // POSSIBLE BUG!!!!!: The more clients there are, the worse the sync between them since there is execution latency. 
             // All the clients start before the master one starts, meaning  that they all start at slightly different times
             // Possible Solution: Since execution time should be constant, the latency should be linear meaning we can just add a constant amount of multipler per each client.
+            // First offset timeout executes on time (whatever executes first), third one doesn't.
         })
 
 //   socket.emit('master_start', id);
