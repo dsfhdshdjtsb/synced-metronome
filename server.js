@@ -107,10 +107,6 @@ app.get('/waiting', function(req, res){
   res.sendFile(path.join(__dirname + '/pages/waiting.html'));
 });
 
-io.on('connection', function (socket) {
-  
-});
-
 // app.post('/timesync', function (req, res) {
 //   var data = {
 //     id: (req.body && 'id' in req.body) ? req.body.id : null,
