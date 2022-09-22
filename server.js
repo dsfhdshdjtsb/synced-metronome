@@ -28,10 +28,10 @@ io.on('connection', (socket) => {
     io.to(msg.ID).emit('user_bpm', msg.BPM)
   });
   socket.on('ping', (msg)=> {
-    io.to(msg.roomId).emit('ping', {masterId: msg.masterId, startTime: msg.startTime});
+    io.to(msg.roomId).emit('ping', {masterId: msg.masterId, startTime: msg.startTime, roomSize: io.sockets.adapter.rooms.get(msg.roomId).size});
   })
   socket.on('return_ping', (msg)=>{
-    io.to(msg.masterId).emit("return_ping", {startTime: msg.startTime, clientId: msg.clientId});
+    io.to(msg.masterId).emit("return_ping", {startTime: msg.startTime, clientId: msg.clientId, roomSize: msg.roomSize});
   })
 
   socket.on('join_room', (msg) => {

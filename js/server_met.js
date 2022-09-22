@@ -16,7 +16,7 @@ var socket = io();
 const id = makeid(5)
 
 var offsets = [];
-var summedOffsets = []
+var roomSize = -1;
 
 var metronome = new Metronome(dot);
 
@@ -43,47 +43,43 @@ function calcOffsets(startTime, id){
 }
 
 function sumKeys(array){
-    // copy pasted from stack overflow it just sums values if key is same name
-    let holder = {};
+    // copy pasted from stack overflow
+    let counts = array.reduce((prev, curr) => {
+        let count = prev.get(curr.clientId) || 0;
+        prev.set(curr.clientId, parseInt(curr.offset) + count);
+        return prev;
+    }, new Map());
 
-    array.forEach(function(offset) {
-        if (holder.hasOwnProperty(offset.clientId)) {
-        holder[offset.clientId] = holder[offset.clientId] + offset.offset;
-        } else {
-        holder[offset.clientId] = offset.offset;
-        }
+      
+    // then, map your counts object back to an array
+    console.log(counts);
+    let res = [];
+    counts.forEach(function(val, key) {
+        res.push({ clientId: key, offset: val });
     });
-
-    let summed = [];
-    
-    // we don't know how many sockets there are in the room, so we are modding it by 10. problem is, it now runs every time it hits 10 pings
-    
-    for (var prop in holder) {
-        summed.push({ clientId: prop, offset: holder[prop]});
-    }
-    // console.log(summed);
-    return summed;
+    console.log(res);
+    return res;
 }
 
-async function sumOffsets(){
-    const settled = await Promise.allSettled(offsets)
-    if (offsets.length%10 == 0){
-        offsets = await Promise.all(offsets)
-        summedOffsets = summedOffsets.concat(sumKeys(offsets));
-        offsets = [];
-        summedOffsets = sumKeys(summedOffsets);
-    }
-}
-
-function averageOffsets(){
-    summedOffsets.forEach((val, index) =>{
-        summedOffsets[index]/=10;
+async function averageOffsets(array){
+    const settled = await Promise.allSettled(array)
+    array = await Promise.all(array)
+    array = sumKeys(array);
+    array.forEach((val, index) =>{
+        array[index]/=10;
     })
+    console.log(array);
+    return array;
 }
+
+
 
 socket.on('return_ping', (msg)=>{
     offsets.push(calcOffsets(msg.startTime, msg.clientId));
-    sumOffsets();
+    roomSize = msg.roomSize - 1;
+    if (offsets.length/10 == roomSize){
+        let averagedOffsets = averageOffsets(offsets);
+    }
 })
 
 socket.on('room taken', function(msg){
@@ -128,8 +124,6 @@ startStopBtn.addEventListener('click', () => {
         //   socket.emit('server_bpm', { BPM: bpm , ID: id} );
         //   socket.emit('master_start', id);
         ping();
-        averageOffsets();
-        console.log(summedOffsets);
 
       } else {
           isRunning = false;
