@@ -19,6 +19,9 @@ io.on('connection', (socket) => {
   socket.on('master_start', (msg) => {
     io.to(msg).emit('user_start', msg)
   });
+  socket.on('ntp_start', (msg) => {
+    io.to(msg).emit('user_start', msg)
+  });
   socket.on('master_stop', (msg) => {
     io.to(msg).emit('user_stop', msg)
   });

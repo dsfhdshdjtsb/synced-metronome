@@ -27,14 +27,18 @@ socket.on('user_stop', function(msg) {
     metronome.stop();
 });
 
+var pingResolve;
+
 function ping(){
-    offsets = [];
-    for (let i = 0; i < 10; i++){
+    return new Promise(resolve =>{
+        offsets = [];
         socket.emit('ping', {roomId: id, masterId: socket.id, startTime: Date.now()});
-    }
+        pingResolve = resolve;
+    })
 }
 
-function calcOffsets(startTime, id){
+
+function genOffsets(startTime, id){
     return new Promise((resolve)=>{
         let afterTime = Date.now();
         let offset = (afterTime-startTime)/2;
@@ -42,43 +46,20 @@ function calcOffsets(startTime, id){
     })
 }
 
-function sumKeys(array){
-    // copy pasted from stack overflow
-    let counts = array.reduce((prev, curr) => {
-        let count = prev.get(curr.clientId) || 0;
-        prev.set(curr.clientId, parseInt(curr.offset) + count);
-        return prev;
-    }, new Map());
+async function handleOffsets(){
+    let settled = await Promise.allSettled(offsets);
+    let resOffsets = await Promise.all(offsets);
 
-      
-    // then, map your counts object back to an array
-    console.log(counts);
-    let res = [];
-    counts.forEach(function(val, key) {
-        res.push({ clientId: key, offset: val });
-    });
-    console.log(res);
-    return res;
+    offsets = resOffsets;
+    pingResolve();
+
 }
-
-async function averageOffsets(array){
-    const settled = await Promise.allSettled(array)
-    array = await Promise.all(array)
-    array = sumKeys(array);
-    array.forEach((val, index) =>{
-        array[index]/=10;
-    })
-    console.log(array);
-    return array;
-}
-
-
 
 socket.on('return_ping', (msg)=>{
-    offsets.push(calcOffsets(msg.startTime, msg.clientId));
+    offsets.push(genOffsets(msg.startTime, msg.clientId));
     roomSize = msg.roomSize - 1;
-    if (offsets.length/10 == roomSize){
-        let averagedOffsets = averageOffsets(offsets);
+    if (offsets.length == roomSize){
+        handleOffsets();
     }
 })
 
@@ -119,11 +100,26 @@ startStopBtn.addEventListener('click', () => {
         lobbyCreated = true;
     }else{
       if (!isRunning) {
-        //   isRunning = true;
-        //   startStopBtn.textContent = 'STOP';
-        //   socket.emit('server_bpm', { BPM: bpm , ID: id} );
-        //   socket.emit('master_start', id);
-        ping();
+        isRunning = true;
+        startStopBtn.textContent = 'STOP';
+        socket.emit('server_bpm', { BPM: bpm , ID: id} );
+
+        ping().then(()=>{
+            console.log(offsets);
+            offsets.forEach(client=>{
+                setTimeout(()=>{
+                    socket.emit('ntp_start', client.clientId);
+                    console.log("starting client")
+                }, 500-client.offset )
+            })
+            setTimeout(()=>{
+                metronome.start()
+                console.log("starting master")
+            }, 500)
+        })
+
+//   socket.emit('master_start', id);
+        
 
       } else {
           isRunning = false;
