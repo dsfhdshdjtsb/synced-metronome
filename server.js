@@ -16,10 +16,10 @@ app.use(express.static(__dirname + '/'));
 // var total = 0;
 io.on('connection', (socket) => {
   //console.log('a user connected');
-  socket.on('master_start', (msg) => {
+  socket.on('master_start', (msg) => { // useless 
     io.to(msg).emit('user_start', msg)
   });
-  socket.on('ntp_start', (msg) => {
+  socket.on('ntp_start', (msg) => { // msg variable is individual socket id, not room id
     io.to(msg).emit('user_start', msg)
   });
   socket.on('master_stop', (msg) => {

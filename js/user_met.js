@@ -29,6 +29,7 @@ socket.on('joined', function(msg){
 
 socket.on('ping' , (msg) => {
     socket.emit('return_ping', {masterId: msg.masterId, startTime:msg.startTime, clientId: socket.id, roomSize: msg.roomSize});
+    console.log(socket.id);
 })
 
 // socket.on('result', (msg) =>{

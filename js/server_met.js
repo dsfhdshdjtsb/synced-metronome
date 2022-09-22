@@ -17,7 +17,7 @@ const id = makeid(5)
 
 var offsets = [];
 var roomSize = -1;
-
+var multiplier = 0;
 var metronome = new Metronome(dot);
 
 socket.on('user_start', function(msg) {
@@ -33,7 +33,7 @@ function ping(){
     return new Promise(resolve =>{
         offsets = [];
         socket.emit('ping', {roomId: id, masterId: socket.id, startTime: Date.now()});
-        pingResolve = resolve;
+        pingResolve = resolve; //assigns resolve function to variable so you can resolve it outside of scope
     })
 }
 
@@ -50,8 +50,8 @@ async function handleOffsets(){
     let settled = await Promise.allSettled(offsets);
     let resOffsets = await Promise.all(offsets);
 
-    offsets = resOffsets;
-    pingResolve();
+    offsets = resOffsets; //makes sure all the offsets have arrived before processing through them
+    pingResolve(); //when all offsets have arrived, resolve ping() function
 
 }
 
@@ -100,22 +100,27 @@ startStopBtn.addEventListener('click', () => {
         lobbyCreated = true;
     }else{
       if (!isRunning) {
+        multiplier = 0;
         isRunning = true;
         startStopBtn.textContent = 'STOP';
         socket.emit('server_bpm', { BPM: bpm , ID: id} );
 
-        ping().then(()=>{
+        ping().then(()=>{ //after ping has been resolved
             console.log(offsets);
-            offsets.forEach(client=>{
-                setTimeout(()=>{
-                    socket.emit('ntp_start', client.clientId);
-                    console.log("starting client")
-                }, 500-client.offset )
+            offsets.forEach(client=>{ 
+                setTimeout(()=>{ //sets a timeout to have all clients send in 500ms by subtracting their offsets
+                    socket.emit('ntp_start', client.clientId); 
+                    console.log("starting client ", client.clientId);
+                }, 500-client.offset+(multiplier*10));
+                multiplier++;
             })
-            setTimeout(()=>{
+            setTimeout(()=>{ //starts master after starting client
                 metronome.start()
                 console.log("starting master")
             }, 500)
+            // POSSIBLE BUG!!!!!: The more clients there are, the worse the sync between them since there is execution latency. 
+            // All the clients start before the master one starts, meaning  that they all start at slightly different times
+            // Possible Solution: Since execution time should be constant, the latency should be linear meaning we can just add a constant amount of multipler per each client.
         })
 
 //   socket.emit('master_start', id);
