@@ -38,28 +38,17 @@ function ping(){
 }
 
 
-function genOffsets(startTime, id){
-    return new Promise((resolve)=>{
+function calcOffset(startTime, id){
         let afterTime = Date.now();
         let offset = (afterTime-startTime)/2;
-        resolve({ clientId: id, offset: offset });
-    })
-}
-
-async function handleOffsets(){
-    let settled = await Promise.allSettled(offsets);
-    let resOffsets = await Promise.all(offsets);
-
-    offsets = resOffsets; //makes sure all the offsets have arrived before processing through them
-    pingResolve(); //when all offsets have arrived, resolve ping() function
-
+        return { clientId: id, offset: offset }; //add check to see if offsets is complete
 }
 
 socket.on('return_ping', (msg)=>{
-    offsets.push(genOffsets(msg.startTime, msg.clientId));
+    offsets.push(calcOffset(msg.startTime, msg.clientId));
     roomSize = msg.roomSize - 1;
     if (offsets.length == roomSize){
-        handleOffsets();
+        pingResolve();
     }
 })
 
@@ -111,7 +100,7 @@ startStopBtn.addEventListener('click', () => {
                 setTimeout(()=>{ //sets a timeout to have all clients send in 500ms by subtracting their offsets
                     socket.emit('ntp_start', client.clientId); 
                     console.log("starting client ", client.clientId);
-                }, 500-client.offset+(multiplier*10));
+                }, 500-client.offset); //+(multiplier*10)
                 multiplier++;
             })
             setTimeout(()=>{ //starts master after starting client
