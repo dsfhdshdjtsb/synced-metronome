@@ -8,12 +8,20 @@ var metronome = new Metronome(dot);
 let bpm = 140;
 let tempoTextString = 'Medium';
   
-
 var socket = io();
-socket.on('user_start', function(msg) {
-    metronome.start();
-    
+
+var ts = timesync.create({
+    server: socket,
+    interval: 5000
 });
+
+socket.on('user_start', function(msg) {
+    console.log(msg - ts.now())
+    setTimeout(function(){
+        metronome.start()
+    }, msg - ts.now())
+});
+
 socket.on('user_stop', function(msg) {
   metronome.stop();
 });
@@ -26,6 +34,11 @@ socket.on('user_bpm', function(msg) {
 socket.on('joined', function(msg){
     enterBtn.innerHTML = 'Joined!';
 })
+
+socket.on('timesync', function (data) {
+    //console.log('receive', data);
+    ts.receive(null, data);
+  });
 
 // socket.on('ping' , (msg) => {
 //     socket.emit('ping', {start: msg, id: socket.id})
@@ -41,9 +54,32 @@ socket.on('not found', function(msg) {
       }, 1000)
 })
 
+
+
+ts.on('sync', function (state) {
+    console.log('sync ' + state + '');
+});
+
+ts.on('change', function (offset) {
+    console.log('changed offset: ' + offset + ' ms');
+});
+
+ts.send = function (socket, data, timeout) {
+    //console.log('send', data);
+    return new Promise(function (resolve, reject) {
+      var timeoutFn = setTimeout(reject, timeout);
+
+      socket.emit('timesync', data, function () {
+        clearTimeout(timeoutFn);
+        resolve();
+      });
+    });
+  };
+
+
 enterBtn.addEventListener('click', () => {
     var txt = codeInput.value
-    socket.emit('join_room', { room: txt , id: socket.id});
+    socket.emit('join_room', { roomID: txt , socketID: socket.id});
 
     metronome.start();
     setTimeout(function(){ 

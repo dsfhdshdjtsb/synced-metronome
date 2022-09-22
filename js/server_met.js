@@ -13,14 +13,24 @@ let isRunning = false;
 let lobbyCreated = false;
 let tempoTextString = 'Medium';
 var socket = io();
-const id = makeid(5)
-
+const roomID = makeid(5)
+const socketID = socket.id;
 var metronome = new Metronome(dot);
-var pinger = new Pinger(socket, id);
+
+var ts = timesync.create({
+    server: socket,
+    interval: 5000
+});
 
 socket.on('user_start', function(msg) {
-    metronome.start();
+    console.log(msg - ts.now())
+    setTimeout(function(){
+        metronome.start()
+    }, msg - ts.now())
+   
+    
 });
+
 socket.on('user_stop', function(msg) {
     metronome.stop();
 });
@@ -31,21 +41,48 @@ socket.on('user_ping', function(msg){
 socket.on('room taken', function(msg){
     code.textContent = "error: refresh page";
 })
+
+socket.on('timesync', function (data) {
+    //console.log('receive', data);
+    ts.receive(null, data);
+  });
+
+
+ts.on('sync', function (state) {
+    console.log('sync ' + state + '');
+});
+
+ts.on('change', function (offset) {
+    console.log('changed offset: ' + offset + ' ms');
+});
+
+ts.send = function (socket, data, timeout) {
+    //console.log('send', data);
+    return new Promise(function (resolve, reject) {
+      var timeoutFn = setTimeout(reject, timeout);
+
+      socket.emit('timesync', data, function () {
+        clearTimeout(timeoutFn);
+        resolve();
+      });
+    });
+  };
+
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
     bpm--;
-    socket.emit('server_bpm', { BPM: bpm , ID: id} );
+    socket.emit('server_bpm', { BPM: bpm , roomID: roomID} );
     updateMetronome();
 });
 increaseTempoBtn.addEventListener('click', () => {
     if (bpm >= 280) { return };
     bpm++;
-    socket.emit('server_bpm', { BPM: bpm , ID: id} );
+    socket.emit('server_bpm', { BPM: bpm , roomID: roomID} );
     updateMetronome();
 });
 tempoSlider.addEventListener('input', () => {
     bpm = tempoSlider.value;
-    socket.emit('server_bpm', { BPM: bpm , ID: id} );
+    socket.emit('server_bpm', { BPM: bpm , roomID: roomID} );
     updateMetronome();
 });
 
@@ -54,11 +91,11 @@ tempoSlider.addEventListener('input', () => {
 startStopBtn.addEventListener('click', () => {
     if(lobbyCreated === false){
         startStopBtn.textContent = "START";
-        code.textContent = id;
-        socket.emit('create_room', {room: id, id: socket.id}); //i realize this is confusing so if ur lookinga t this gl im too lazy to fix
+        code.textContent = roomID;
+        socket.emit('create_room', {roomID: roomID, socketID: socketID}); //i realize this is confusing so if ur lookinga t this gl im too lazy to fix
         metronome.start();
         setTimeout(function(){ 
-            socket.emit('master_stop', id);
+            socket.emit('master_stop', roomID);
         }, 100)
 //test
         lobbyCreated = true;
@@ -66,16 +103,17 @@ startStopBtn.addEventListener('click', () => {
       if (!isRunning) {
           isRunning = true;
           startStopBtn.textContent = 'STOP';
-          socket.emit('server_bpm', { BPM: bpm , ID: id} );
-          socket.emit('master_start', id);
+          socket.emit('server_bpm', { BPM: bpm , roomID: roomID} );
+          socket.emit('master_start', {roomID:roomID, start: ts.now() + 500});
 
+          console.log('now: ', ts.now())
         //   pinger.startPing()
       } else {
         // pinger.stopPing()
           isRunning = false;
           startStopBtn.textContent = 'START';
           dot.style.background = "white";
-          socket.emit('master_stop', id);
+          socket.emit('master_stop', roomID);
       }
     }
 });

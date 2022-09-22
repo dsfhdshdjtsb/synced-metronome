@@ -1,4 +1,5 @@
 const express = require('express');
+const timesyncServer = require('timesync/server')
 const app = express();
 const path = require('path');
 const http = require('http');
@@ -6,10 +7,14 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+app.use('/timesync/', express.static(path.join(__dirname, '/../../../dist')));
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 app.use(express.static(__dirname + '/'));
+
+app.use('/timesync', timesyncServer.requestHandler);
 
 // var interval;
 // var counter = 0;
@@ -17,27 +22,24 @@ app.use(express.static(__dirname + '/'));
 io.on('connection', (socket) => {
   //console.log('a user connected');
   socket.on('master_start', (msg) => {
-    io.to(msg).emit('user_start', msg)
+    io.to(msg.roomID).emit('user_start', msg.start)
   });
   socket.on('master_stop', (msg) => {
     io.to(msg).emit('user_stop', msg)
   });
   socket.on('server_bpm', (msg) => {
-    console.log(msg.ID)
+    console.log(msg.roomID)
     console.log(msg.BPM)
-    io.to(msg.ID).emit('user_bpm', msg.BPM)
+    io.to(msg.roomID).emit('user_bpm', msg.BPM)
   });
-  socket.on('ping', (msg) => {
-    io.to(msg.ID).emit('user_ping', msg.start)
-  })
   socket.on('join_room', (msg) => {
-    if(io.sockets.adapter.rooms.has(msg.room))
+    if(io.sockets.adapter.rooms.has(msg.roomID))
     {
-      console.log("joined room " + msg.room)
-      io.to(msg.id).emit("joined", socket.id, msg)
-      socket.join(msg.room);
+      console.log("joined room " + msg.roomID)
+      io.to(msg.socketID).emit("joined", msg)
+      socket.join(msg.roomID);
       setTimeout(function(){ 
-        io.to(msg.id).emit('user_stop', msg)
+        io.to(msg.socketID).emit('user_stop', msg)
       }, 100)
       // interval = setInterval(() => {
       //   const start = Date.now();
@@ -47,20 +49,20 @@ io.on('connection', (socket) => {
     }
     else{
       console.log(msg)
-      console.log("room " + msg.room + " not found")
-      io.to(msg.id).emit("not found", msg)
+      console.log("room " + msg.roomID + " not found")
+      io.to(msg.socketID).emit("not found", msg)
     }
     
   })
   socket.on('create_room', (msg) => {
-    console.log("created room: " + msg)
-    if(io.sockets.adapter.rooms.has(msg.room))
+    if(io.sockets.adapter.rooms.has(msg.roomID))
     {
-      io.to(msg.id).emit('room taken', msg)
+      io.to(msg.socketID).emit('room taken', msg)
     }
     else
     {
-      socket.join(msg.room);
+      console.log("created room: " + msg)
+      socket.join(msg.roomID);
     }
     
   })
@@ -78,6 +80,13 @@ io.on('connection', (socket) => {
   //     clearInterval(interval)
   //   }
   // })
+  socket.on('timesync', function (data) {
+    console.log('message', data);
+    socket.emit('timesync', {
+      id: data && 'id' in data ? data.id : null,
+      result: Date.now()
+    });
+  });
 });
 
 
@@ -97,6 +106,14 @@ app.get('/user_met', function(req, res){
 app.get('/waiting', function(req, res){
   res.sendFile(path.join(__dirname + '/pages/waiting.html'));
 });
+
+// app.post('/timesync', function (req, res) {
+//   var data = {
+//     id: (req.body && 'id' in req.body) ? req.body.id : null,
+//     result: Date.now()
+//   };
+//   res.json(data);
+// });
 
 let port = process.env.PORT;
 if (port == null || port == "") {
