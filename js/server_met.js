@@ -18,9 +18,20 @@ const id = makeid(5)
 var metronome = new Metronome(dot);
 var pinger = new Pinger(socket, id);
 
-socket.on('user_start', function(msg) {
-    metronome.start();
+var ts = timesync.create({
+    server: socket,
+    interval: 5000
 });
+
+socket.on('user_start', function(msg) {
+    console.log(msg - ts.now())
+    setTimeout(function(){
+        metronome.start()
+    }, msg - ts.now())
+   
+    
+});
+
 socket.on('user_stop', function(msg) {
     metronome.stop();
 });
@@ -31,6 +42,33 @@ socket.on('user_ping', function(msg){
 socket.on('room taken', function(msg){
     code.textContent = "error: refresh page";
 })
+
+socket.on('timesync', function (data) {
+    //console.log('receive', data);
+    ts.receive(null, data);
+  });
+
+
+ts.on('sync', function (state) {
+    console.log('sync ' + state + '');
+});
+
+ts.on('change', function (offset) {
+    console.log('changed offset: ' + offset + ' ms');
+});
+
+ts.send = function (socket, data, timeout) {
+    //console.log('send', data);
+    return new Promise(function (resolve, reject) {
+      var timeoutFn = setTimeout(reject, timeout);
+
+      socket.emit('timesync', data, function () {
+        clearTimeout(timeoutFn);
+        resolve();
+      });
+    });
+  };
+
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
     bpm--;
@@ -67,8 +105,9 @@ startStopBtn.addEventListener('click', () => {
           isRunning = true;
           startStopBtn.textContent = 'STOP';
           socket.emit('server_bpm', { BPM: bpm , ID: id} );
-          socket.emit('master_start', id);
+          socket.emit('master_start', {ID:id, start: ts.now() + 1000});
 
+          console.log('now: ', ts.now())
         //   pinger.startPing()
       } else {
         // pinger.stopPing()

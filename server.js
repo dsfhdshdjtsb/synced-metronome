@@ -1,4 +1,5 @@
 const express = require('express');
+const timesyncServer = require('timesync/server')
 const app = express();
 const path = require('path');
 const http = require('http');
@@ -6,10 +7,14 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+app.use('/timesync/', express.static(path.join(__dirname, '/../../../dist')));
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 app.use(express.static(__dirname + '/'));
+
+app.use('/timesync', timesyncServer.requestHandler);
 
 // var interval;
 // var counter = 0;
@@ -17,7 +22,7 @@ app.use(express.static(__dirname + '/'));
 io.on('connection', (socket) => {
   //console.log('a user connected');
   socket.on('master_start', (msg) => {
-    io.to(msg).emit('user_start', msg)
+    io.to(msg.ID).emit('user_start', msg.start)
   });
   socket.on('master_stop', (msg) => {
     io.to(msg).emit('user_stop', msg)
@@ -78,6 +83,13 @@ io.on('connection', (socket) => {
   //     clearInterval(interval)
   //   }
   // })
+  socket.on('timesync', function (data) {
+    console.log('message', data);
+    socket.emit('timesync', {
+      id: data && 'id' in data ? data.id : null,
+      result: Date.now()
+    });
+  });
 });
 
 
@@ -97,6 +109,18 @@ app.get('/user_met', function(req, res){
 app.get('/waiting', function(req, res){
   res.sendFile(path.join(__dirname + '/pages/waiting.html'));
 });
+
+io.on('connection', function (socket) {
+  
+});
+
+// app.post('/timesync', function (req, res) {
+//   var data = {
+//     id: (req.body && 'id' in req.body) ? req.body.id : null,
+//     result: Date.now()
+//   };
+//   res.json(data);
+// });
 
 let port = process.env.PORT;
 if (port == null || port == "") {
