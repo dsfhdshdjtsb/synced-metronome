@@ -8,7 +8,6 @@ var metronome = new Metronome(dot);
 let bpm = 140;
 let tempoTextString = 'Medium';
   
-
 var socket = io();
 
 var ts = timesync.create({
@@ -80,7 +79,7 @@ ts.send = function (socket, data, timeout) {
 
 enterBtn.addEventListener('click', () => {
     var txt = codeInput.value
-    socket.emit('join_room', { room: txt , id: socket.id});
+    socket.emit('join_room', { roomID: txt , socketID: socket.id});
 
     metronome.start();
     setTimeout(function(){ 

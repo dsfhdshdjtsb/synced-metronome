@@ -13,10 +13,9 @@ let isRunning = false;
 let lobbyCreated = false;
 let tempoTextString = 'Medium';
 var socket = io();
-const id = makeid(5)
-
+const roomID = makeid(5)
+const socketID = socket.id;
 var metronome = new Metronome(dot);
-var pinger = new Pinger(socket, id);
 
 var ts = timesync.create({
     server: socket,
@@ -72,18 +71,18 @@ ts.send = function (socket, data, timeout) {
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
     bpm--;
-    socket.emit('server_bpm', { BPM: bpm , ID: id} );
+    socket.emit('server_bpm', { BPM: bpm , roomID: roomID} );
     updateMetronome();
 });
 increaseTempoBtn.addEventListener('click', () => {
     if (bpm >= 280) { return };
     bpm++;
-    socket.emit('server_bpm', { BPM: bpm , ID: id} );
+    socket.emit('server_bpm', { BPM: bpm , roomID: roomID} );
     updateMetronome();
 });
 tempoSlider.addEventListener('input', () => {
     bpm = tempoSlider.value;
-    socket.emit('server_bpm', { BPM: bpm , ID: id} );
+    socket.emit('server_bpm', { BPM: bpm , roomID: roomID} );
     updateMetronome();
 });
 
@@ -92,11 +91,11 @@ tempoSlider.addEventListener('input', () => {
 startStopBtn.addEventListener('click', () => {
     if(lobbyCreated === false){
         startStopBtn.textContent = "START";
-        code.textContent = id;
-        socket.emit('create_room', {room: id, id: socket.id}); //i realize this is confusing so if ur lookinga t this gl im too lazy to fix
+        code.textContent = roomID;
+        socket.emit('create_room', {roomID: roomID, socketID: socketID}); //i realize this is confusing so if ur lookinga t this gl im too lazy to fix
         metronome.start();
         setTimeout(function(){ 
-            socket.emit('master_stop', id);
+            socket.emit('master_stop', roomID);
         }, 100)
 //test
         lobbyCreated = true;
@@ -104,8 +103,8 @@ startStopBtn.addEventListener('click', () => {
       if (!isRunning) {
           isRunning = true;
           startStopBtn.textContent = 'STOP';
-          socket.emit('server_bpm', { BPM: bpm , ID: id} );
-          socket.emit('master_start', {ID:id, start: ts.now() + 500});
+          socket.emit('server_bpm', { BPM: bpm , roomID: roomID} );
+          socket.emit('master_start', {roomID:roomID, start: ts.now() + 500});
 
           console.log('now: ', ts.now())
         //   pinger.startPing()
@@ -114,7 +113,7 @@ startStopBtn.addEventListener('click', () => {
           isRunning = false;
           startStopBtn.textContent = 'START';
           dot.style.background = "white";
-          socket.emit('master_stop', id);
+          socket.emit('master_stop', roomID);
       }
     }
 });

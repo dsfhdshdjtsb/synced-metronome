@@ -22,27 +22,24 @@ app.use('/timesync', timesyncServer.requestHandler);
 io.on('connection', (socket) => {
   //console.log('a user connected');
   socket.on('master_start', (msg) => {
-    io.to(msg.ID).emit('user_start', msg.start)
+    io.to(msg.roomID).emit('user_start', msg.start)
   });
   socket.on('master_stop', (msg) => {
     io.to(msg).emit('user_stop', msg)
   });
   socket.on('server_bpm', (msg) => {
-    console.log(msg.ID)
+    console.log(msg.roomID)
     console.log(msg.BPM)
-    io.to(msg.ID).emit('user_bpm', msg.BPM)
+    io.to(msg.roomID).emit('user_bpm', msg.BPM)
   });
-  socket.on('ping', (msg) => {
-    io.to(msg.ID).emit('user_ping', msg.start)
-  })
   socket.on('join_room', (msg) => {
-    if(io.sockets.adapter.rooms.has(msg.room))
+    if(io.sockets.adapter.rooms.has(msg.roomID))
     {
-      console.log("joined room " + msg.room)
-      io.to(msg.id).emit("joined", socket.id, msg)
-      socket.join(msg.room);
+      console.log("joined room " + msg.roomID)
+      io.to(msg.socketID).emit("joined", msg)
+      socket.join(msg.roomID);
       setTimeout(function(){ 
-        io.to(msg.id).emit('user_stop', msg)
+        io.to(msg.socketID).emit('user_stop', msg)
       }, 100)
       // interval = setInterval(() => {
       //   const start = Date.now();
@@ -52,20 +49,20 @@ io.on('connection', (socket) => {
     }
     else{
       console.log(msg)
-      console.log("room " + msg.room + " not found")
-      io.to(msg.id).emit("not found", msg)
+      console.log("room " + msg.roomID + " not found")
+      io.to(msg.socketID).emit("not found", msg)
     }
     
   })
   socket.on('create_room', (msg) => {
-    console.log("created room: " + msg)
-    if(io.sockets.adapter.rooms.has(msg.room))
+    if(io.sockets.adapter.rooms.has(msg.roomID))
     {
-      io.to(msg.id).emit('room taken', msg)
+      io.to(msg.socketID).emit('room taken', msg)
     }
     else
     {
-      socket.join(msg.room);
+      console.log("created room: " + msg)
+      socket.join(msg.roomID);
     }
     
   })
