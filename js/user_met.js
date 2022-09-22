@@ -21,9 +21,8 @@ socket.on('user_start', function(msg) {
     setTimeout(function(){
         metronome.start()
     }, msg - ts.now())
-   
-    
 });
+
 socket.on('user_stop', function(msg) {
   metronome.stop();
 });

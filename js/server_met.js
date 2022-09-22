@@ -105,7 +105,7 @@ startStopBtn.addEventListener('click', () => {
           isRunning = true;
           startStopBtn.textContent = 'STOP';
           socket.emit('server_bpm', { BPM: bpm , ID: id} );
-          socket.emit('master_start', {ID:id, start: ts.now() + 1000});
+          socket.emit('master_start', {ID:id, start: ts.now() + 500});
 
           console.log('now: ', ts.now())
         //   pinger.startPing()
