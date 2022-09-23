@@ -39,9 +39,10 @@ socket.on('user_start', function(msg) {
 socket.on('user_stop', function(msg) {
     metronome.stop();
     if (msg.error == "outOfSync"){
-        startStopBtn.textContent = 'START';
-        alert("Syncing Error: Restart Page");
+        alert("Syncing Error: Try again");
         isRunning = false;
+        startStopBtn.textContent = 'START';
+        dot.style.background = "white";
     }
 });
 
