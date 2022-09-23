@@ -19,7 +19,7 @@ var ts = timesync.create({
 
 socket.on('user_start', function(msg) {
     console.log(msg - ts.now())
-    let offset = msg-ts.now() + 1000;
+    let offset = msg-ts.now();
     if (offset < 500 && offset > 0){
         setTimeout(function(){
             metronome.start()
