@@ -34,6 +34,14 @@ body{
     font-family: "Raleway", sans-serif;
 }
 
+.tempo-display{
+    outline: 0px solid transparent;
+}
+
+.tempo-display:hover{
+    cursor: pointer;
+}
+
 .tempo-settings {
     display: flex;
     justify-content: space-between;

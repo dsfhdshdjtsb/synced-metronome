@@ -75,6 +75,44 @@ ts.send = function (socket, data, timeout) {
     });
   };
 
+  tempoDisplay.addEventListener("click", (e)=>{
+    tempoDisplay.textContent="";
+  })
+
+window.addEventListener('click', function(e){   //probably bad practice idc tho
+    if (!(tempoDisplay.contains(e.target))){
+        updateTempoDisplay();
+    }
+});
+
+tempoDisplay.addEventListener("keypress", (e)=>{
+    var x = e.charCode || e.keyCode;
+    let newBpm = -1;
+    if (isNaN(String.fromCharCode(e.which)) && x!=46 || x===32 || (x===46 && e.currentTarget.innerText.includes('.'))){
+        e.preventDefault()
+    }
+
+    if (x == 13){
+        updateTempoDisplay();
+    }
+
+})
+
+function updateTempoDisplay(){
+    tempoDisplay.removeAttribute("contenteditable");
+    let newBpm = parseInt(tempoDisplay.textContent);
+    tempoDisplay.setAttribute("contenteditable", true);
+    console.log(newBpm);
+    if (newBpm <= 280 && newBpm > 0){
+        bpm = newBpm;
+        updateMetronome();
+        newBpm = -1;
+    }else{
+        newBpm = -1;
+        updateMetronome();
+    }
+}
+
 decreaseTempoBtn.addEventListener('click', () => {
     if (bpm <= 20) { return };
     bpm--;
