@@ -24,23 +24,31 @@ var ts = timesync.create({
 
 socket.on('user_start', function(msg) {
     console.log(msg - ts.now())
-    setTimeout(function(){
-        metronome.start()
-    }, msg - ts.now())
+    let offset = msg-ts.now()
+    if (offset < 500 && offset > 0){
+        setTimeout(function(){
+            metronome.start()
+        }, msg - ts.now())
+    }else{
+        console.warn("going out of sync for some reason.")
+        socket.emit("master_stop", {roomID: roomID, error: "outOfSync"});
+    }
    
-    
 });
 
 socket.on('user_stop', function(msg) {
     metronome.stop();
+    if (msg.error == "outOfSync"){
+        startStopBtn.textContent = 'START';
+        alert("Syncing Error: Restart Page");
+        isRunning = false;
+    }
 });
-socket.on('user_ping', function(msg){
-    console.log(Date.now() - msg);
-})
 
 socket.on('room taken', function(msg){
     code.textContent = "error: refresh page";
 })
+
 
 socket.on('timesync', function (data) {
     //console.log('receive', data);
@@ -86,8 +94,6 @@ tempoSlider.addEventListener('input', () => {
     updateMetronome();
 });
 
-
-
 startStopBtn.addEventListener('click', () => {
     if(lobbyCreated === false){
         startStopBtn.textContent = "START";
@@ -95,9 +101,9 @@ startStopBtn.addEventListener('click', () => {
         socket.emit('create_room', {roomID: roomID, socketID: socketID}); //i realize this is confusing so if ur lookinga t this gl im too lazy to fix
         metronome.start();
         setTimeout(function(){ 
-            socket.emit('master_stop', roomID);
+            socket.emit('master_stop', {roomID: roomID, error: ""});
         }, 100)
-//test
+
         lobbyCreated = true;
     }else{
       if (!isRunning) {
@@ -105,15 +111,13 @@ startStopBtn.addEventListener('click', () => {
           startStopBtn.textContent = 'STOP';
           socket.emit('server_bpm', { BPM: bpm , roomID: roomID} );
           socket.emit('master_start', {roomID:roomID, start: ts.now() + 500});
-
           console.log('now: ', ts.now())
-        //   pinger.startPing()
       } else {
         // pinger.stopPing()
           isRunning = false;
           startStopBtn.textContent = 'START';
           dot.style.background = "white";
-          socket.emit('master_stop', roomID);
+          socket.emit('master_stop', {roomID: roomID, error: ""});
       }
     }
 });

@@ -16,16 +16,14 @@ app.use(express.static(__dirname + '/'));
 
 app.use('/timesync', timesyncServer.requestHandler);
 
-// var interval;
-// var counter = 0;
-// var total = 0;
+
 io.on('connection', (socket) => {
   //console.log('a user connected');
   socket.on('master_start', (msg) => {
-    io.to(msg.roomID).emit('user_start', msg.start)
+    io.to(msg.roomID).emit('user_start', msg.start);
   });
   socket.on('master_stop', (msg) => {
-    io.to(msg).emit('user_stop', msg)
+    io.to(msg.roomID).emit('user_stop', msg)
   });
   socket.on('server_bpm', (msg) => {
     console.log(msg.roomID)
@@ -81,7 +79,6 @@ io.on('connection', (socket) => {
   //   }
   // })
   socket.on('timesync', function (data) {
-    console.log('message', data);
     socket.emit('timesync', {
       id: data && 'id' in data ? data.id : null,
       result: Date.now()

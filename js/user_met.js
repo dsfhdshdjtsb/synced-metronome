@@ -7,8 +7,10 @@ const codeInput = document.querySelector('.form-control');
 var metronome = new Metronome(dot);
 let bpm = 140;
 let tempoTextString = 'Medium';
-  
+
 var socket = io();
+
+var socketRoom;
 
 var ts = timesync.create({
     server: socket,
@@ -17,14 +19,26 @@ var ts = timesync.create({
 
 socket.on('user_start', function(msg) {
     console.log(msg - ts.now())
-    setTimeout(function(){
-        metronome.start()
-    }, msg - ts.now())
+    let offset = msg-ts.now() + 1000;
+    if (offset < 500 && offset > 0){
+        setTimeout(function(){
+            metronome.start()
+        }, msg - ts.now())
+    }else{
+        console.warn("going out of sync for some reason.")
+        console.log(socketRoom);
+        setTimeout(()=>{
+            socket.emit("master_stop", {roomID: socketRoom, error: "outOfSync"});
+        }, 500)
+        
+    }
+
 });
 
 socket.on('user_stop', function(msg) {
   metronome.stop();
 });
+
 
 socket.on('user_bpm', function(msg) {
     bpm = parseInt(msg);
@@ -33,6 +47,7 @@ socket.on('user_bpm', function(msg) {
 
 socket.on('joined', function(msg){
     enterBtn.innerHTML = 'Joined!';
+    socketRoom = msg.roomID;
 })
 
 socket.on('timesync', function (data) {
@@ -80,7 +95,6 @@ ts.send = function (socket, data, timeout) {
 enterBtn.addEventListener('click', () => {
     var txt = codeInput.value
     socket.emit('join_room', { roomID: txt , socketID: socket.id});
-
     metronome.start();
     setTimeout(function(){ 
       metronome.stop();
