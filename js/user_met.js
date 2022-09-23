@@ -9,7 +9,7 @@ let bpm = 140;
 let tempoTextString = 'Medium';
 
 var socket = io();
-
+var kickCounter = 0;
 var socketRoom;
 
 var ts = timesync.create({
@@ -25,18 +25,22 @@ socket.on('user_start', function(msg) {
             metronome.start()
         }, msg - ts.now())
     }else{
+        if (kickCounter < 2){
+            socket.emit("leave_room", socket.id);
+        }
         console.warn("going out of sync for some reason.")
         console.log(socketRoom);
         setTimeout(()=>{
             socket.emit("master_stop", {roomID: socketRoom, error: "outOfSync"});
         }, 500)
+        kickCounter++;
         
     }
 
 });
 
 socket.on('user_stop', function(msg) {
-  metronome.stop();
+    metronome.stop();
 });
 
 

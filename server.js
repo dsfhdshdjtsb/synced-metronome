@@ -52,6 +52,12 @@ io.on('connection', (socket) => {
     }
     
   })
+
+  socket.on('leave_room', (msg)=>{
+    console.log(msg, " has disconnected from their room");
+    socket.leave(msg);
+  })
+
   socket.on('create_room', (msg) => {
     if(io.sockets.adapter.rooms.has(msg.roomID))
     {

@@ -24,14 +24,15 @@ var ts = timesync.create({
 
 socket.on('user_start', function(msg) {
     console.log(msg - ts.now())
-    let offset = msg-ts.now()
+    let offset = msg-ts.now();
     if (offset < 500 && offset > 0){
         setTimeout(function(){
             metronome.start()
         }, msg - ts.now())
     }else{
-        console.warn("going out of sync for some reason.")
-        socket.emit("master_stop", {roomID: roomID, error: "outOfSync"});
+        setTimeout(()=>{
+            socket.emit("master_stop", { roomID: roomID, error: "masterOOS" })
+        },500)
     }
    
 });
@@ -39,10 +40,7 @@ socket.on('user_start', function(msg) {
 socket.on('user_stop', function(msg) {
     metronome.stop();
     if (msg.error == "outOfSync"){
-        alert("Syncing Error: Try again");
-        isRunning = false;
-        startStopBtn.textContent = 'START';
-        dot.style.background = "white";
+        metronome.start();
     }
 });
 
