@@ -25,7 +25,7 @@ socket.on('user_start', function(msg) {
             metronome.start()
         }, msg - ts.now())
     }else{
-        if (kickCounter < 2){
+        if (kickCounter > 2){
             socket.emit("leave_room", socket.id);
         }
         console.warn("going out of sync for some reason.")
